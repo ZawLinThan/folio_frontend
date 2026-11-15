@@ -1,29 +1,34 @@
 @import "tailwindcss";
 @import "@fontsource-variable/geist";
+@import "@fontsource/jetbrains-mono/latin-500.css";
 @import "./skeletons/skeletons.css";
 /* Folio workspace tokens. The blue aliases serve existing study components. */
 :root {
   color-scheme: light;
-  --background: #f5f7f5;
-  --surface: #fff;
-  --text: #172722;
-  --muted: #50635b;
-  --accent: #0c6954;
-  --accent-hover: #095440;
+  --folio-paper: #faf9f6;
+  --folio-ink: #18181b;
+  --folio-green: #15803d;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-editorial: Georgia, "Times New Roman", serif;
+  --background: var(--folio-paper);
+  --surface: #fffefa;
+  --text: var(--folio-ink);
+  --muted: #565850;
+  --accent: var(--folio-green);
+  --accent-hover: #11632e;
   --on-accent: #fff;
-  --accent-soft: #e8f3ee;
-  --border: #d9e4de;
-  --control-border: #879e92;
-  --shadow-color: #123b2c13;
+  --accent-soft: #edf1e6;
+  --border: #deded2;
+  --control-border: #85887b;
+  --shadow-color: #25271d13;
   --error: #a52621;
   --error-border: #e6b5b1;
   --error-surface: #fff5f4;
-  --hero-background: #123f36;
-  --hero-depth: #0e302a;
-  --hero-text: #f6fff9;
-  --hero-muted: #c1ded2;
-  --hero-accent: #abebc8;
-  --hero-line: #c1ded232;
+  --hero-background: #f2f2e7;
+  --hero-text: var(--text);
+  --hero-muted: var(--muted);
+  --hero-accent: var(--accent);
+  --hero-line: #5b66452a;
   --blue: var(--accent);
   --blue-hover: var(--accent-hover);
   --on-blue: var(--on-accent);
@@ -31,17 +36,19 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #101916;
-  --surface: #182420;
-  --text: #eaf4ef;
-  --muted: #b7c9c0;
-  --accent: #91dfba;
-  --accent-hover: #b4efd2;
-  --on-accent: #102b21;
-  --accent-soft: #243b32;
-  --border: #354b41;
-  --control-border: #739184;
+  --background: #191a17;
+  --surface: #22231f;
+  --text: #f0eee6;
+  --muted: #c1c2b6;
+  --accent: #a0cf9b;
+  --accent-hover: #bcdfb9;
+  --on-accent: #172918;
+  --accent-soft: #303930;
+  --border: #41463c;
+  --control-border: #818b7c;
   --shadow-color: #00000035;
+  --hero-background: #272d25;
+  --hero-line: #c1c2b62b;
   --error: #ffc3bd;
   --error-border: #86544e;
   --error-surface: #3c2624;
@@ -1803,14 +1810,6 @@ progress {
 :focus-visible {
   outline: 2px solid var(--blue);
 }
-.search-field input:focus {
-  outline: none;
-  box-shadow: none;
-}
-.search-field:focus-within {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
-}
 @media (max-width: 640px) {
   .theme-toggle span {
     display: none;
@@ -2309,16 +2308,12 @@ footer {
   align-items: end;
   box-shadow: 0 4px 16px rgba(26, 39, 57, 0.04);
 }
-.study-assistant .chat-composer:focus-within {
-  border-color: var(--blue);
-}
 .study-assistant .chat-composer textarea {
   padding: 8px;
   min-width: 0;
   resize: none;
   font-size: 13px;
   line-height: 1.5;
-  outline: none;
   color: var(--text);
 }
 .study-assistant .chat-composer .button {
@@ -3006,7 +3001,7 @@ footer {
 .documents-page .search-field input {
   padding: 8px 0;
 }
-.documents-page :is(.search-field, .dropzone):focus-within {
+.documents-page .dropzone:focus-within {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
@@ -3132,6 +3127,15 @@ footer {
 .route-message a:focus-visible {
   outline: 2px solid var(--blue);
 }
+/* Composite text fields show focus on their shared frame. */
+:is(.search-field > input, .chat-composer > textarea):focus {
+  outline: none;
+  box-shadow: none;
+}
+:is(.search-field, .chat-composer):focus-within {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
 .study-page .panel,
 .study-page .course-card,
 .study-page .fc-deck {
@@ -3143,10 +3147,6 @@ footer {
 }
 .study-page .search-field input {
   padding-block: 8px;
-}
-.study-page .search-field:focus-within {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
 }
 .courses-page .course-card h3,
 .course-page .notebook h3,
@@ -3237,9 +3237,6 @@ footer {
 }
 .settings-page .settings-panel .notice {
   max-width: 52ch;
-}
-.study-assistant .chat-composer:focus-within {
-  border-color: var(--blue);
 }
 .timer-page .timer-clock-content {
   font-variant-numeric: tabular-nums;
@@ -3380,8 +3377,9 @@ footer {
   padding-inline: clamp(20px, 3.4vw, 48px);
 }
 .page-heading h1 {
-  font-weight: 650;
-  font-size: clamp(27px, 3vw, 38px);
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: clamp(29px, 3.2vw, 42px);
   letter-spacing: -.045em;
   overflow-wrap: anywhere;
 }
@@ -3427,10 +3425,8 @@ footer {
 .overview-page .hero-panel,
 .auth-story {
   color: var(--hero-text);
-  border-color: var(--hero-background);
-  background:
-    radial-gradient(ellipse at 95% 0%, var(--hero-background), transparent 75%),
-    var(--hero-depth);
+  border-color: var(--border);
+  background: var(--hero-background);
 }
 .overview-page .hero-panel {
   isolation: isolate;
@@ -3463,9 +3459,10 @@ footer {
 }
 .hero-panel h2 {
   color: var(--hero-text);
-  font-size: clamp(34px, 4vw, 56px);
-  letter-spacing: -.052em;
-  font-weight: 650;
+  font-family: var(--font-editorial);
+  font-size: clamp(34px, 4.1vw, 58px);
+  letter-spacing: -.045em;
+  font-weight: 400;
   line-height: 1.04;
   margin: 13px 0;
 }
@@ -3478,12 +3475,12 @@ footer {
 .hero-panel .button {
   background: var(--hero-accent);
   border-color: var(--hero-accent);
-  color: var(--hero-depth);
+  color: var(--on-accent);
   margin-top: 20px;
 }
 .hero-panel .button:hover {
-  background: var(--hero-text);
-  border-color: var(--hero-text);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 .hero-panel .button:focus-visible,
 .auth-story a:focus-visible {
@@ -3610,14 +3607,15 @@ footer {
 }
 .auth-story .brand-mark {
   background: var(--hero-accent);
-  color: var(--hero-depth);
+  color: var(--on-accent);
 }
 .auth-story .auth-statement {
   color: var(--hero-text);
   font-size: clamp(36px, 5.1vw, 76px);
   line-height: 1.04;
+  font-family: var(--font-editorial);
   letter-spacing: -.055em;
-  font-weight: 650;
+  font-weight: 400;
   margin-bottom: 22px;
 }
 .auth-story p:not(.auth-statement) {
@@ -3713,4 +3711,26 @@ footer {
   .chat-composer textarea {
     font-size: 16px;
   }
+}
+
+.home-loading {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.source-badge,
+.citation {
+  font-family: var(--font-mono);
+}
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-size: 11px;
 }

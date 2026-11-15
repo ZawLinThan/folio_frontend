@@ -54,11 +54,10 @@ export const useAuthForm = (mode: AuthFormProps["mode"]) => {
         return;
       }
 
-      useAuthStore.getState().setUser(data.user);
-      console.log("data.user", useAuthStore.getState().user);
       form.resetField("password");
       form.resetField("confirmPassword");
       if (data.session) {
+        useAuthStore.getState().setSession(data.session);
         navigate("/", { replace: true });
       } else {
         setMessage(

@@ -75,7 +75,7 @@ const SettingsForm = () => {
                 setMessage(result.error.message);
                 return;
               }
-              navigate("/login", { replace: true });
+              navigate("/", { replace: true });
             }}
           >
             Sign out
