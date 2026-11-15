@@ -27,9 +27,16 @@ const LayoutPage = () => {
         value={{ playback, spotifyLoaded, openSpotify, musicProvider }}
       >
         <div className="app-layout">
+          <a className="skip-link" href="#workspace-main">
+            Skip to content
+          </a>
           <WorkspaceSidebar />
           <div className="main-shell">
-            <main className={timerPage ? "timer-workspace" : undefined}>
+            <main
+              id="workspace-main"
+              tabIndex={-1}
+              className={timerPage ? "timer-workspace" : undefined}
+            >
               <Outlet />
               <MusicPanel
                 onProviderChange={setMusicProvider}
