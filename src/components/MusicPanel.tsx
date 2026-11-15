@@ -22,7 +22,12 @@ export default function MusicPanel({
 }) {
   const [provider, setProvider] = useState<Provider>("spotify");
   const [link, setLink] = useState("");
-  const [embed, setEmbed] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState<{
+    embed: string;
+    link: string;
+    attempt: number;
+  } | null>(null);
+  const embed = loaded?.embed;
   const [error, setError] = useState("");
   const floating = useLocation().pathname !== "/timer";
   const selector = (
@@ -32,7 +37,7 @@ export default function MusicPanel({
         setProvider(option);
         onProviderChange(option);
         setLink("");
-        setEmbed(null);
+        setLoaded(null);
         setError("");
         onPlayback(null);
         onContentChange(false);
@@ -105,7 +110,11 @@ export default function MusicPanel({
             );
             return;
           }
-          setEmbed(next);
+          setLoaded((previous) => ({
+            embed: next,
+            link: link.trim(),
+            attempt: (previous?.attempt ?? 0) + 1,
+          }));
           onContentChange(true);
           setError("");
         }}
@@ -141,21 +150,40 @@ export default function MusicPanel({
           </p>
         )}
       </form>
-      {embed ? (
+      {loaded ? (
         <div className="spotify-embed">
           <iframe
-            key={embed}
-            src={embed}
+            key={loaded.attempt}
+            src={loaded.embed}
             title={`${name} player`}
-            height="352"
+            height={provider === "youtube" ? 380 : 352}
             width="100%"
-            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+            referrerPolicy={
+              provider === "youtube"
+                ? "strict-origin-when-cross-origin"
+                : undefined
+            }
+            allow={
+              provider === "youtube"
+                ? "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                : "autoplay; encrypted-media; fullscreen; picture-in-picture"
+            }
             allowFullScreen
           />
+          {provider === "youtube" && (
+            <a
+              className="text-link"
+              href={loaded.link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open loaded link <ExternalLink size={14} />
+            </a>
+          )}
           <button
             className="text-link"
             onClick={() => {
-              setEmbed(null);
+              setLoaded(null);
               onContentChange(false);
             }}
           >

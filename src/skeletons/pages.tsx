@@ -103,12 +103,14 @@ export const OverviewCoursesSkeleton = () => (
 );
 const OverviewPageSkeleton = () => (
   <div className="overview-page">
+    <p className="eyebrow overview-kicker">Personal workspace</p>
     <HeadingSkeleton
       dynamic
       title="Welcome back, Student!"
       description="Pick up where you left off, or discover something new."
       action="Upload notes"
       icon={<Plus size={17} />}
+      primary={false}
     />
     <OverviewHero />
     <OverviewTotals loading />

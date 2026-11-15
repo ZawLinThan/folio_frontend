@@ -18,13 +18,13 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       <div className="auth-story">
         <Brand />
         <div>
-          <h1>
+          <p className="auth-statement">
             Your notes.
             <br />
             Your questions.
             <br />
             Your next aha.
-          </h1>
+          </p>
           <p>
             A thoughtful space to organize knowledge
             <br />
@@ -159,12 +159,6 @@ const AuthForm = ({ mode }: AuthFormProps) => {
               {mode === "signup" ? "Sign in" : "Create an account"}
             </Link>
           </p>
-          <div className="auth-demo">
-            <Link className="button" to="/">
-              Explore the demo workspace <ArrowRight size={16} />
-            </Link>
-            <small>No account needed to explore.</small>
-          </div>
         </div>
       </div>
     </div>

@@ -23,11 +23,12 @@ const OverviewPage = () => {
 
   return (
     <div className="overview-page">
+      <p className="eyebrow overview-kicker">Personal workspace</p>
       <PageHeading
         title={`Welcome back, ${user?.user_metadata.full_name || "Student"}!`}
         description="Pick up where you left off, or discover something new."
         action={
-          <Link className="button primary" to="/documents">
+          <Link className="button" to="/documents">
             <Plus size={17} />
             Upload notes
           </Link>
@@ -71,9 +72,12 @@ const OverviewPage = () => {
               limit={3}
             />
           ) : (
-            <p className="panel empty">
-              No courses yet. Open My courses to get started.
-            </p>
+            <div className="panel empty overview-empty">
+              <p>Create a course to organize your notes and study materials.</p>
+              <Link to="/courses" className="button">
+                Go to courses <ArrowRight size={16} />
+              </Link>
+            </div>
           )}
         </section>
       )}

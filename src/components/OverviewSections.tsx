@@ -7,7 +7,9 @@ import {
   Layers,
   ListChecks,
   Files,
-  GraduationCap,
+  BookOpen,
+  Check,
+  Library,
 } from "lucide-react";
 
 export function OverviewTotals({
@@ -27,31 +29,36 @@ export function OverviewTotals({
     <section className="stats-grid" aria-label="Study totals">
       {[
         {
-          icon: GraduationCap,
+          icon: Library,
           value: courses,
-          label: "Active courses",
+          label: "Courses",
+          to: "/courses",
         },
         {
           icon: Files,
           value: documents,
-          label: "Study documents",
+          label: "Documents",
+          to: "/documents",
         },
         {
           icon: Layers,
           value: decks,
           label: "Flashcard decks",
+          to: "/flashcards",
         },
         {
           icon: ListChecks,
           value: tests,
           label: "Generated tests",
+          to: "/tests",
         },
-      ].map(({ icon: Icon, value, label }) => (
-        <div className="stat" key={label}>
-          <span>
-            <Icon size={21} />
-          </span>
-          <div>
+      ].map(({ icon: Icon, value, label, to }) => {
+        const content = (
+          <>
+            <span className="stat-icon" aria-hidden="true">
+              <Icon size={19} />
+            </span>
+            <ArrowUpRight className="stat-arrow" size={15} aria-hidden="true" />
             <strong>
               {loading ? (
                 <SkeletonText>00</SkeletonText>
@@ -59,10 +66,19 @@ export function OverviewTotals({
                 (value ?? <span aria-label="Count unavailable">—</span>)
               )}
             </strong>
-            <p>{label}</p>
+            <span className="stat-label">{label}</span>
+          </>
+        );
+        return loading ? (
+          <div key={to} className="stat">
+            {content}
           </div>
-        </div>
-      ))}
+        ) : (
+          <Link key={to} className="stat" to={to}>
+            {content}
+          </Link>
+        );
+      })}
     </section>
   );
 }
@@ -70,19 +86,19 @@ export function OverviewTotals({
 export function OverviewHero() {
   return (
     <section className="hero-panel">
-      <div>
+      <div className="hero-copy">
         <span className="hero-label">
           <Sparkles size={15} />
-          YOUR PERSONAL STUDY COMPANION
+          AI STUDY ASSISTANT
         </span>
         <h2>
-          Less searching.
+          Make sense of
           <br />
-          More understanding.
+          your notes.
         </h2>
         <p>
-          Turn your course notes into clear answers, useful flashcards,
-          <br className="desktop-break" /> and moments that make it all click.
+          Ask a question and get a clear answer grounded in the material you’ve
+          uploaded.
         </p>
         <Link className="button" to="/chat">
           Ask your study assistant <ArrowRight size={17} />
@@ -98,7 +114,7 @@ export function OverviewHero() {
         <div className="paper back-paper" />
         <div className="paper front-paper">
           <span className="paper-icon">
-            <GraduationCap size={28} />
+            <BookOpen size={22} />
           </span>
           <strong>Aha, now I get it.</strong>
           <div className="paper-line" />
@@ -108,7 +124,7 @@ export function OverviewHero() {
           </div>
         </div>
         <div className="floating-tag tag-two">
-          <span className="check-dot">✓</span>Grounded in your notes
+          <Check size={15} /> Grounded in your notes
         </div>
       </div>
     </section>

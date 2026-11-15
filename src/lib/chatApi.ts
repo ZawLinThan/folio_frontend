@@ -37,6 +37,18 @@ export async function getChatSession(id: string): Promise<ChatSessionDetail> {
   return data;
 }
 
+export async function renameChatSession(id: string, title: string) {
+  const { data } = await api.patch<Pick<ChatSessionSummary, "id" | "title">>(
+    `/api/chat/sessions/${encodeURIComponent(id)}`,
+    { title },
+  );
+  return data;
+}
+
+export async function deleteChatSession(id: string): Promise<void> {
+  await api.delete(`/api/chat/sessions/${encodeURIComponent(id)}`);
+}
+
 export type ChatAnswer = {
   userMessage: { id: string; content: string };
   assistantMessage: { id: string; content: string };

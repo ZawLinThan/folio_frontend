@@ -1,7 +1,8 @@
 import SpotifyCallbackPage from "./pages/SpotifyCallbackPage";
 import { spotify } from "./lib/spotify";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import LayoutPage from "./pages/LayoutPage";
+import LandingPage from "./pages/LandingPage";
 import OverviewPage from "./pages/OverviewPage";
 import CoursesPage from "./pages/CoursesPage";
 import CoursePage from "./pages/CoursePage";
@@ -22,6 +23,29 @@ import WorkspaceProvider from "./components/WorkspaceProvider";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { studyKeys } from "./hooks/useStudyQueries";
+
+function WorkspaceRoute() {
+  const { session, isLoading } = useAuthStore();
+  const { pathname } = useLocation();
+
+  if (pathname === "/" && !session) {
+    return isLoading ? (
+      <div className="home-loading" role="status">
+        Opening Folio…
+      </div>
+    ) : (
+      <LandingPage />
+    );
+  }
+
+  return (
+    <ProtectedRoute>
+      <WorkspaceProvider>
+        <LayoutPage />
+      </WorkspaceProvider>
+    </ProtectedRoute>
+  );
+}
 
 const App = () => {
   const { initializeAuth } = useAuthStore();
@@ -50,15 +74,7 @@ const App = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/auth/callback" element={<CallbackPage />} />
-      <Route
-        element={
-          <ProtectedRoute>
-            <WorkspaceProvider>
-              <LayoutPage />
-            </WorkspaceProvider>
-          </ProtectedRoute>
-        }
-      >
+      <Route element={<WorkspaceRoute />}>
         <Route index element={<OverviewPage />} />
         <Route path="courses" element={<CoursesPage />} />
         <Route path="courses/:courseId" element={<CoursePage />} />

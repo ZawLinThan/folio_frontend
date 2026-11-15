@@ -5,7 +5,7 @@ import { supabase } from "../lib/supabase/client";
 interface AuthState {
   session: Session | null;
   user: User | null;
-  setUser: (user: User | null) => void;
+  setSession: (session: Session | null) => void;
   isLoading: boolean;
   error: string | null;
   initializeAuth: () => () => void; // To be used on mount. Returns a cleanup function
@@ -14,7 +14,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   user: null,
-  setUser: (user) => set({ user }),
+  setSession: (session) => set({ session, user: session?.user ?? null }),
   isLoading: true,
   error: null,
 

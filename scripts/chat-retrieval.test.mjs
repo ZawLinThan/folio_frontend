@@ -6,8 +6,29 @@ import {
   sendChatMessage,
   getChatSessions,
   getChatSession,
+  renameChatSession,
+  deleteChatSession,
 } from "../src/lib/chatApi.ts";
 import api from "../src/lib/axios.ts";
+
+test("rename and delete target the saved conversation", async (t) => {
+  const title = "Study notes";
+  const path = "/api/chat/sessions/session";
+  const patch = t.mock.method(api, "patch", async () => ({
+    data: { id: "session", title },
+  }));
+  const remove = t.mock.method(api, "delete", async () => ({ status: 204 }));
+
+  assert.deepEqual(await renameChatSession("session", title), {
+    id: "session",
+    title,
+  });
+  await deleteChatSession("session");
+  assert.deepEqual(patch.mock.calls.map(({ arguments: args }) => args), [
+    [path, { title }],
+  ]);
+  assert.deepEqual(remove.mock.calls.map(({ arguments: args }) => args), [[path]]);
+});
 
 test("scope includes only ready documents in the chosen course, notebook and file", () => {
   const documents = [

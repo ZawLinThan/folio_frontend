@@ -15,6 +15,10 @@ import {
   BookOpen,
   ArrowUpRight,
   Layers3,
+  Pencil,
+  Trash2,
+  Check,
+  X,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useStudyData } from "../hooks/useStudyQueries";
@@ -23,11 +27,15 @@ import {
   sendChatMessage,
   getChatSessions,
   getChatSession,
+  renameChatSession,
+  deleteChatSession,
+  type ChatSessionSummary,
   type ChatSource,
 } from "../lib/chatApi";
 import { readyDocumentsInScope } from "../lib/chatScope";
 import { questionSchema } from "../zodSchema/studySchema";
 import PageHeading from "../components/PageHeading";
+import Modal from "../components/Modal";
 import QueryState from "../components/QueryState";
 import { useAuthStore } from "../stores/authStore";
 import { getNameInitials } from "../lib/utils";
@@ -39,13 +47,18 @@ type ChatMessage = {
   sources?: ChatSource[];
 };
 type Session = { id: string; scope: string };
+const historyKey = ["study", "chat-sessions"] as const;
+const getHistoryTitle = (item: ChatSessionSummary) =>
+  item.title ||
+  item.messages.find((message) => message.role === "user")?.content ||
+  "New conversation";
 
 const ChatPage = () => {
   const data = useStudyData();
   const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
   const history = useQuery({
-    queryKey: ["study", "chat-sessions"],
+    queryKey: historyKey,
     queryFn: getChatSessions,
   });
   const [params] = useSearchParams();
@@ -57,7 +70,18 @@ const ChatPage = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [restoredIds, setRestoredIds] = useState<string[] | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [activity, setActivity] = useState<"sending" | "opening" | null>(null);
+  const [activity, setActivity] = useState<
+    "sending" | "opening" | "editing" | null
+  >(null);
+  const [historyError, setHistoryError] = useState("");
+  const [titleEdit, setTitleEdit] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
   const busy = activity !== null;
   const lock = useRef(false);
   const messageSequence = useRef(0);
@@ -89,12 +113,73 @@ const ChatPage = () => {
     if (element) element.scrollTop = element.scrollHeight;
   }, [messages, activity, data.isPending, data.error]);
 
-  const reset = () => {
-    if (lock.current) return;
+  const clearConversation = () => {
     setSession(null);
     setRestoredIds(null);
     setMessages([]);
     setError("");
+  };
+
+  const reset = () => {
+    if (!lock.current) clearConversation();
+  };
+
+  const updateHistory = async (
+    change: { id: string; title: string } | { id: string },
+  ) => {
+    if (lock.current) return;
+    setHistoryError("");
+    const { id } = change;
+    const title = "title" in change ? change.title.trim() : null;
+    if (title !== null && (!title || title.length > 255)) {
+      setHistoryError("Enter a title between 1 and 255 characters.");
+      return;
+    }
+
+    lock.current = true;
+    setActivity("editing");
+    try {
+      let updatedTitle: string | null = null;
+      if (title !== null) {
+        updatedTitle = (await renameChatSession(id, title)).title;
+        setTitleEdit(null);
+      } else {
+        await deleteChatSession(id);
+        setDeleteTarget(null);
+        if (session?.id === id) {
+          clearConversation();
+          setQuestion("");
+        }
+      }
+      await queryClient.cancelQueries({ queryKey: historyKey });
+      queryClient.setQueryData<ChatSessionSummary[]>(historyKey, (previous) =>
+        title !== null
+          ? previous?.map((entry) =>
+              entry.id === id ? { ...entry, title: updatedTitle } : entry,
+            )
+          : previous?.filter((entry) => entry.id !== id),
+      );
+      void queryClient.invalidateQueries({ queryKey: historyKey });
+    } catch {
+      setHistoryError(
+        `Could not ${title === null ? "delete" : "rename"} this conversation. Please try again.`,
+      );
+    } finally {
+      lock.current = false;
+      setActivity(null);
+    }
+  };
+
+  const cancelTitleEdit = () => {
+    if (lock.current) return;
+    setTitleEdit(null);
+    setHistoryError("");
+  };
+
+  const closeDeleteModal = () => {
+    if (lock.current) return;
+    setDeleteTarget(null);
+    setHistoryError("");
   };
 
   const ask = async (value: string) => {
@@ -128,7 +213,7 @@ const ChatPage = () => {
         activeSession = { id, scope };
         setSession(activeSession);
         void queryClient.invalidateQueries({
-          queryKey: ["study", "chat-sessions"],
+          queryKey: historyKey,
         });
       }
       const answer = await sendChatMessage(activeSession.id, text);
@@ -146,7 +231,7 @@ const ChatPage = () => {
         },
       ]);
       void queryClient.invalidateQueries({
-        queryKey: ["study", "chat-sessions"],
+        queryKey: historyKey,
       });
     } catch (cause) {
       setMessages((previous) =>
@@ -239,19 +324,20 @@ const ChatPage = () => {
         >
           <div className="history-heading">
             <div>
-              <span className="assistant-kicker">YOUR WORKSPACE</span>
               <h3>Conversations</h3>
             </div>
             <button
               className="history-close-button"
               type="button"
               aria-label="Close chat history"
-              onClick={() => setHistoryOpen(false)}
+              onClick={() => {
+                cancelTitleEdit();
+                setHistoryOpen(false);
+              }}
             >
               <PanelLeftClose size={18} />
             </button>
           </div>
-          <p className="history-intro">Pick up where you left off.</p>
           {history.isPending && (
             <SkeletonRegion label="Loading conversations">
               <ConversationHistorySkeleton />
@@ -273,24 +359,149 @@ const ChatPage = () => {
           )}
           {[...(history.data ?? [])]
             .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-            .map((item) => (
-              <button
-                key={item.id}
-                className={`chat-history-item ${session?.id === item.id ? "selected" : ""}`}
-                disabled={busy}
-                aria-current={session?.id === item.id ? "true" : undefined}
-                onClick={() => void openSession(item.id)}
-              >
-                <strong>
-                  {item.title ||
-                    item.messages.find((message) => message.role === "user")
-                      ?.content ||
-                    "New conversation"}
-                </strong>
-                <small>{new Date(item.updatedAt).toLocaleDateString()}</small>
-              </button>
-            ))}
+            .map((item) =>
+              titleEdit?.id === item.id ? (
+                <form
+                  key={item.id}
+                  className="chat-history-row chat-history-edit"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    void updateHistory(titleEdit);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") cancelTitleEdit();
+                  }}
+                >
+                  <input
+                    aria-label="Conversation title"
+                    autoFocus
+                    maxLength={255}
+                    value={titleEdit.title}
+                    readOnly={busy}
+                    onChange={(event) => {
+                      setTitleEdit({ id: item.id, title: event.target.value });
+                      setHistoryError("");
+                    }}
+                  />
+                  <button
+                    className="history-close-button"
+                    type="submit"
+                    title="Save title"
+                    aria-label="Save title"
+                    disabled={busy}
+                  >
+                    <Check size={15} />
+                  </button>
+                  <button
+                    className="history-close-button"
+                    type="button"
+                    title="Cancel edit"
+                    aria-label="Cancel edit"
+                    disabled={busy}
+                    onClick={cancelTitleEdit}
+                  >
+                    <X size={15} />
+                  </button>
+                  {historyError && (
+                    <p className="error" role="alert">
+                      {historyError}
+                    </p>
+                  )}
+                </form>
+              ) : (
+                <div
+                  className={`chat-history-row chat-history-entry ${session?.id === item.id ? "selected" : ""}`}
+                  key={item.id}
+                >
+                  <button
+                    type="button"
+                    className="chat-history-item"
+                    disabled={busy}
+                    aria-current={session?.id === item.id ? "true" : undefined}
+                    onClick={() => {
+                      cancelTitleEdit();
+                      void openSession(item.id);
+                    }}
+                  >
+                    <strong>{getHistoryTitle(item)}</strong>
+                    <small>
+                      {new Date(item.updatedAt).toLocaleDateString()}
+                    </small>
+                  </button>
+                  <button
+                    className="chat-history-action"
+                    type="button"
+                    title="Edit title"
+                    aria-label={`Edit title for ${item.title || "conversation from " + new Date(item.updatedAt).toLocaleDateString()}`}
+                    disabled={busy}
+                    onClick={() => {
+                      setHistoryError("");
+                      setTitleEdit({
+                        id: item.id,
+                        title: getHistoryTitle(item).slice(0, 255),
+                      });
+                    }}
+                  >
+                    <Pencil size={15} />
+                  </button>
+                  <button
+                    className="chat-history-action"
+                    type="button"
+                    title="Delete conversation"
+                    aria-label={`Delete ${item.title || "conversation from " + new Date(item.updatedAt).toLocaleDateString()}`}
+                    disabled={busy}
+                    onClick={() => {
+                      cancelTitleEdit();
+                      setDeleteTarget({
+                        id: item.id,
+                        title: getHistoryTitle(item),
+                      });
+                    }}
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              ),
+            )}
         </aside>
+        {deleteTarget && (
+          <Modal
+            title="Delete conversation"
+            busy={busy}
+            onClose={closeDeleteModal}
+          >
+            <form
+              className="inline-form record-edit-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void updateHistory({ id: deleteTarget.id });
+              }}
+            >
+              <p>
+                Delete “{deleteTarget.title}” and all its messages? This cannot
+                be undone.
+              </p>
+              {historyError && (
+                <p className="error" role="alert">
+                  {historyError}
+                </p>
+              )}
+              <div className="inline-actions record-modal-actions">
+                <button
+                  type="button"
+                  className="button"
+                  disabled={busy}
+                  onClick={closeDeleteModal}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="button danger" disabled={busy}>
+                  {busy ? "Deleting…" : "Delete conversation"}
+                </button>
+              </div>
+            </form>
+          </Modal>
+        )}
         <div className="chat-layout">
           <section className="panel chat-panel">
             <div className="chat-scope">
