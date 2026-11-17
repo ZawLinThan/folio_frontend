@@ -61,6 +61,9 @@ export type Test = {
   id: string;
   userId: string;
   title: string | null;
+  notebookId: string | null;
+  status: "queued" | "processing" | "ready" | "failed";
+  errorMessage: string | null;
   referenceFileId: string | null;
   createdAt: string;
   updatedAt: string;

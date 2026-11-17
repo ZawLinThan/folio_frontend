@@ -39,17 +39,24 @@ export function spotifyContent(input: string) {
   const uri = /^spotify:(track|album|playlist):([A-Za-z0-9]{22})$/.exec(
     input.trim(),
   );
-  if (uri) return { type: uri[1], id: uri[2] };
+
+  if (uri) {
+    return { type: uri[1], id: uri[2] };
+  }
+
   try {
     const url = new URL(input);
+
     if (
       url.protocol !== "https:" ||
       url.hostname !== "open.spotify.com" ||
       url.username ||
       url.password ||
       url.port
-    )
+    ) {
       return null;
+    }
+
     const match =
       /^\/(?:intl-[a-z]+\/)?(track|album|playlist)\/([A-Za-z0-9]{22})\/?$/.exec(
         url.pathname,
@@ -62,6 +69,7 @@ export function spotifyContent(input: string) {
 
 export function validateRedirect(value: string, origin: string) {
   const url = new URL(value);
+
   if (
     url.origin !== origin ||
     url.pathname !== "/spotify/callback" ||
@@ -74,10 +82,12 @@ export function validateRedirect(value: string, origin: string) {
       url.protocol === "https:" ||
       (url.protocol === "http:" && url.hostname === "127.0.0.1")
     )
-  )
+  ) {
     throw new Error(
       "Use an HTTPS redirect on this app’s origin, or http://127.0.0.1 for local development, ending in /spotify/callback.",
     );
+  }
+
   return url.href;
 }
 
@@ -119,24 +129,33 @@ export function createSpotifyClient(
     publish();
   };
   async function request(url: string, init: RequestInit, signal?: AbortSignal) {
-    if (cooldown > Date.now())
+    if (cooldown > Date.now()) {
       throw new SpotifyError(
         "Spotify is rate limiting requests. Please wait before trying again.",
         429,
         cooldown,
       );
+    }
+
     for (let attempt = 0; ; attempt++) {
       const res = await transport(url, { ...init, signal, cache: "no-store" });
-      if (res.status !== 429) return res;
+
+      if (res.status !== 429) {
+        return res;
+      }
+
       const delay = retryDelay(res.headers.get("Retry-After"), attempt);
       cooldown = Date.now() + delay;
+
       // Avoid keeping long requests alive. The UI schedules the next attempt.
-      if (attempt >= 2 || delay > 10000)
+      if (attempt >= 2 || delay > 10000) {
         throw new SpotifyError(
           "Spotify is busy. We’ll wait before checking again.",
           429,
           cooldown,
         );
+      }
+
       await new Promise<void>((resolve, reject) => {
         const abort = () => {
           clearTimeout(id);
@@ -146,19 +165,25 @@ export function createSpotifyClient(
           signal?.removeEventListener("abort", abort);
           resolve();
         }, delay);
-        if (signal?.aborted) abort();
-        else signal?.addEventListener("abort", abort, { once: true });
+
+        if (signal?.aborted) {
+          abort();
+        } else {
+          signal?.addEventListener("abort", abort, { once: true });
+        }
       });
     }
   }
   async function failure(res: Response): Promise<never> {
     const raw = await res.text();
     let body;
+
     try {
       body = JSON.parse(raw);
     } catch {
       /* Spotify sometimes returns plain-text access errors. */
     }
+
     const detail =
       typeof body?.error?.message === "string"
         ? body.error.message
@@ -169,6 +194,7 @@ export function createSpotifyClient(
             : !body && !raw.trim().startsWith("<")
               ? raw.trim().slice(0, 500)
               : "";
+
     if (body?.error === "invalid_grant" || res.status === 401) {
       disconnect();
       throw new SpotifyError(
@@ -176,6 +202,7 @@ export function createSpotifyClient(
         res.status,
       );
     }
+
     const fallback =
       res.status === 404
         ? "No active Spotify device. Start playback in Spotify, then try again."
@@ -196,15 +223,25 @@ export function createSpotifyClient(
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ ...params, client_id: config.clientId }),
     });
-    if (!res.ok) return failure(res);
+
+    if (!res.ok) {
+      return failure(res);
+    }
+
     const data = tokenSchema.parse(await res.json());
-    if (expectedVersion !== version)
+
+    if (expectedVersion !== version) {
       throw new Error("Spotify connection was cancelled.");
+    }
+
     const refreshToken = data.refresh_token ?? tokens?.refresh;
-    if (!refreshToken || data.token_type.toLowerCase() !== "bearer")
+
+    if (!refreshToken || data.token_type.toLowerCase() !== "bearer") {
       throw new Error(
         "Spotify returned an invalid authorization response. Connect again.",
       );
+    }
+
     tokens = {
       access: data.access_token,
       refresh: refreshToken,
@@ -213,8 +250,10 @@ export function createSpotifyClient(
     publish();
   }
   async function refreshTokens() {
-    if (!tokens)
+    if (!tokens) {
       throw new SpotifyError("Connect Spotify to see what’s playing.", 401);
+    }
+
     if (!refresh) {
       refresh = exchange(
         { grant_type: "refresh_token", refresh_token: tokens.refresh },
@@ -223,6 +262,7 @@ export function createSpotifyClient(
         refresh = null;
       });
     }
+
     await refresh;
   }
   return {
@@ -235,10 +275,12 @@ export function createSpotifyClient(
     connected: () => tokens !== null,
     disconnect,
     async authorize() {
-      if (!config.clientId)
+      if (!config.clientId) {
         throw new Error(
           "Spotify sign-in is not configured yet. You can still load a Spotify link below.",
         );
+      }
+
       const redirect = validateRedirect(
         config.redirectUri,
         window.location.origin,
@@ -273,23 +315,31 @@ export function createSpotifyClient(
       const saved = sessionStorage.getItem(transactionKey);
       sessionStorage.removeItem(transactionKey);
       const transaction = saved ? JSON.parse(saved) : null;
+
       if (
         !transaction ||
         params.get("state") !== transaction.state ||
         Date.now() - transaction.created > 600000
-      )
+      ) {
         throw new Error(
           "Spotify sign-in could not be verified or has expired. Please connect again.",
         );
-      if (params.has("error"))
+      }
+
+      if (params.has("error")) {
         throw new Error(
           "Spotify access was declined. You can reconnect from the focus timer.",
         );
+      }
+
       const code = params.get("code");
-      if (!code)
+
+      if (!code) {
         throw new Error(
           "Spotify did not return an authorization code. Please connect again.",
         );
+      }
+
       await exchange(
         {
           grant_type: "authorization_code",
@@ -305,7 +355,11 @@ export function createSpotifyClient(
     },
     async currentlyPlaying(signal?: AbortSignal): Promise<Playback | null> {
       const expectedVersion = version;
-      if (!tokens || tokens.expires < Date.now() + 60000) await refreshTokens();
+
+      if (!tokens || tokens.expires < Date.now() + 60000) {
+        await refreshTokens();
+      }
+
       const call = () =>
         request(
           "https://api.spotify.com/v1/me/player/currently-playing",
@@ -313,15 +367,25 @@ export function createSpotifyClient(
           signal,
         );
       let res = await call();
+
       if (res.status === 401) {
         await refreshTokens();
         res = await call();
       }
-      if (!res.ok) return failure(res);
-      if (version !== expectedVersion)
+
+      if (!res.ok) {
+        return failure(res);
+      }
+
+      if (version !== expectedVersion) {
         throw new DOMException("Disconnected", "AbortError");
+      }
+
       // Spotify may return no content when no active playback exists.
-      if (res.status === 204) return null;
+      if (res.status === 204) {
+        return null;
+      }
+
       return playbackSchema.parse(await res.json());
     },
   };

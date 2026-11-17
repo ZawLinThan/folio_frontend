@@ -207,7 +207,10 @@ export const reconcileStudyMutation = <TInput, TResult>(
     | Flashcard
     | Test
     | UploadResult;
-  if (!record || typeof record !== "object") return;
+
+  if (!record || typeof record !== "object") {
+    return;
+  }
 
   if ("document" in record) {
     upsert(studyKeys.documents, record.document);
@@ -246,6 +249,7 @@ export const useStudyMutation = <TInput, TResult>(
     mutationFn,
     onSuccess: async (result, input) => {
       const deletingDocument = (mutationFn as unknown) === api.deleteDocument;
+
       if (deletingDocument) {
         // A list read started before the delete can still contain the old row.
         await Promise.all([
@@ -253,11 +257,15 @@ export const useStudyMutation = <TInput, TResult>(
           client.cancelQueries({ queryKey: studyKeys.notebookDocumentLists }),
         ]);
       }
+
       reconcileStudyMutation(client, mutationFn, input, result);
       // Broad invalidation is deliberate: document/deck changes affect counts,
       // notebook scopes, chat sources, lists, details, and generated resources.
       const refresh = client.invalidateQueries({ queryKey: studyKeys.all });
-      if (!deletingDocument) await refresh;
+
+      if (!deletingDocument) {
+        await refresh;
+      }
     },
   });
 };

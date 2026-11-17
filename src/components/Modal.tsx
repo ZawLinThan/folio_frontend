@@ -23,7 +23,10 @@ export default function Modal({
         : null;
     element?.showModal();
     return () => {
-      if (element?.open) element.close();
+      if (element?.open) {
+        element.close();
+      }
+
       opener?.focus();
     };
   }, []);
@@ -35,10 +38,15 @@ export default function Modal({
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
-        if (!busy) onClose();
+
+        if (!busy) {
+          onClose();
+        }
       }}
       onClick={(event) => {
-        if (event.target === event.currentTarget && !busy) onClose();
+        if (event.target === event.currentTarget && !busy) {
+          onClose();
+        }
       }}
     >
       <div className="creation-modal-header">

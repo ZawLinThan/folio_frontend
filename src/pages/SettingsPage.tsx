@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { settingsSchema } from "../zodSchema/studySchema";
 import { supabase } from "../lib/supabase/client";
-import { useAuthStore } from "../stores/authStore";
+import { useDisplayName, useProfile, useSavePreferredName } from "../hooks/useProfile";
 import PageHeading from "../components/PageHeading";
 
 const SettingsForm = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
-  const [name, setName] = useState(user?.user_metadata.full_name || "");
-  const [goal, setGoal] = useState("20");
+  const profile = useProfile();
+  const displayName = useDisplayName();
+  const savePreferredName = useSavePreferredName();
+  const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setName(profile.data?.preferredName ?? "");
+  }, [profile.data?.preferredName]);
 
   return (
     <div className="settings-page study-page">
@@ -20,37 +24,26 @@ const SettingsForm = () => {
         description="A study space that works for you."
       />
       <section className="panel settings-panel">
-        <h2>Study preferences</h2>
+        <h2>Profile</h2>
+        <p>Your display name is {displayName}.</p>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            const result = settingsSchema.safeParse({ name, goal });
-            if (!result.success) {
+            try {
+              await savePreferredName(name);
+              setFailed(false);
+              setMessage("Preferred name saved.");
+            } catch (error) {
               setFailed(true);
-              setMessage(result.error.issues[0].message);
-              return;
+              setMessage(error instanceof Error ? error.message : "Unable to save name.");
             }
-            setFailed(false);
-            setMessage(
-              "Preferences updated for this screen. Persistent profile settings will be connected with the backend.",
-            );
           }}
         >
           <label>
-            Display name
-            <input value={name} onChange={(e) => setName(e.target.value)} />
+            Preferred name (optional)
+            <input maxLength={255} value={name} onChange={(e) => setName(e.target.value)} />
           </label>
-          <label>
-            Daily study goal (minutes)
-            <input
-              type="number"
-              min="5"
-              max="120"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-            />
-          </label>
-          <button className="button primary">Save preferences</button>
+          <button className="button primary">Save preferred name</button>
         </form>
 
         {message && (
@@ -70,11 +63,13 @@ const SettingsForm = () => {
             className="button"
             onClick={async () => {
               const result = await supabase?.auth.signOut();
+
               if (result?.error) {
                 setFailed(true);
                 setMessage(result.error.message);
                 return;
               }
+
               navigate("/", { replace: true });
             }}
           >

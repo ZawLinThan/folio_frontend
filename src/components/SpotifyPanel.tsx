@@ -35,22 +35,30 @@ export default function SpotifyPanel({
     onContentChange(Boolean(content));
   }, [content, onContentChange]);
   useEffect(() => {
-    if (!connected) return;
+    if (!connected) {
+      return;
+    }
+
     const controller = new AbortController();
     let timeout: ReturnType<typeof setTimeout>;
     let stopped = false;
     const check = async () => {
       let delay = 10000;
+
       if (!document.hidden) {
         try {
           const next = await spotify.currentlyPlaying(controller.signal);
+
           if (!stopped) {
             setPlayback(next);
             onPlayback(next);
             setMessage("");
           }
         } catch (error) {
-          if (stopped) return;
+          if (stopped) {
+            return;
+          }
+
           setPlayback(null);
           onPlayback(null);
           setMessage(
@@ -58,13 +66,20 @@ export default function SpotifyPanel({
               ? error.message
               : "Could not reach Spotify. Check your connection.",
           );
+
           if (error instanceof SpotifyError) {
-            if (error.status === 403 || error.status === 401) return;
+            if (error.status === 403 || error.status === 401) {
+              return;
+            }
+
             delay = Math.max(delay, error.retryAt - Date.now());
           }
         }
       }
-      if (!stopped) timeout = setTimeout(() => void check(), delay);
+
+      if (!stopped) {
+        timeout = setTimeout(() => void check(), delay);
+      }
     };
     void check();
     return () => {
@@ -178,6 +193,7 @@ export default function SpotifyPanel({
               onClick={async () => {
                 setConnecting(true);
                 setMessage("");
+
                 try {
                   await spotify.authorize();
                 } catch (error) {
@@ -251,12 +267,14 @@ export default function SpotifyPanel({
           onSubmit={(event) => {
             event.preventDefault();
             const parsed = spotifyContent(link);
+
             if (!parsed) {
               setLinkError(
                 "Paste a valid open.spotify.com link to a playlist, album, or track.",
               );
               return;
             }
+
             setContent(parsed);
             setLinkError("");
           }}

@@ -15,5 +15,6 @@ export function completeSpotifyAuthorization() {
     window.history.replaceState(null, "", window.location.pathname);
     callback = spotify.callback(search);
   }
+
   return callback;
 }

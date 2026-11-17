@@ -30,7 +30,11 @@ export function startTimer(durationMs: number, now: number): TimerState {
 }
 export function pauseTimer(state: TimerState, now: number): TimerState {
   const remainingMs = remainingTime(state, now);
-  if (state.status !== "running") return state;
+
+  if (state.status !== "running") {
+    return state;
+  }
+
   return remainingMs === 0
     ? { ...state, status: "completed", remainingMs: 0, deadlineMs: null }
     : { ...state, status: "paused", remainingMs, deadlineMs: null };
@@ -50,8 +54,12 @@ export function formatTimer(ms: number): string {
     : `${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
 }
 export function parseTimerState(value: unknown): TimerState | null {
-  if (!value || typeof value !== "object") return null;
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
   const s = value as TimerState;
+
   if (
     !["idle", "running", "paused", "completed"].includes(s.status) ||
     !Number.isFinite(s.durationMs) ||
@@ -63,7 +71,9 @@ export function parseTimerState(value: unknown): TimerState | null {
     (s.status === "running"
       ? !Number.isFinite(s.deadlineMs)
       : s.deadlineMs !== null)
-  )
+  ) {
     return null;
+  }
+
   return s;
 }

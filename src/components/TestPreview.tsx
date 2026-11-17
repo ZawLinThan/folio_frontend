@@ -4,30 +4,72 @@ import { useQuery } from "@tanstack/react-query";
 import { studyQueries } from "../hooks/useStudyQueries";
 import QueryState from "./QueryState";
 
-/** The answer key and question body use a proposed backend content contract. */
+/** Show generation status until the persisted question content is ready. */
 const TestPreview = ({ id }: { id: string }) => {
-  const metadata = useQuery(studyQueries.test(id));
-  const content = useQuery(studyQueries.testContent(id));
+  const metadata = useQuery({
+    ...studyQueries.test(id),
+    refetchInterval: (query) =>
+      query.state.data?.status === "queued" ||
+      query.state.data?.status === "processing"
+        ? 2000
+        : false,
+  });
+  const content = useQuery({
+    ...studyQueries.testContent(id),
+    enabled: metadata.data?.status === "ready",
+  });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showKey, setShowKey] = useState(false);
-  if (
-    metadata.isPending ||
-    content.isPending ||
-    metadata.error ||
-    content.error
-  )
+
+  if (metadata.isPending || metadata.error) {
     return (
       <QueryState
-        pending={metadata.isPending || content.isPending}
+        pending={metadata.isPending}
         skeleton={<TestPreviewSkeleton />}
-        error={metadata.error ?? content.error}
+        error={metadata.error}
         retry={() => {
           void metadata.refetch();
-          void content.refetch();
         }}
       />
     );
-  if (!content.data || !metadata.data) return null;
+  }
+
+  if (
+    metadata.data?.status === "queued" ||
+    metadata.data?.status === "processing"
+  ) {
+    return (
+      <section className="panel test-preview" role="status">
+        {metadata.data.status === "queued"
+          ? "Test queued…"
+          : "Generating your test…"}
+      </section>
+    );
+  }
+
+  if (metadata.data?.status === "failed") {
+    return (
+      <section className="panel test-preview" role="alert">
+        {metadata.data.errorMessage || "Test generation failed."}
+      </section>
+    );
+  }
+
+  if (content.isPending || content.error) {
+    return (
+      <QueryState
+        pending={content.isPending}
+        skeleton={<TestPreviewSkeleton />}
+        error={content.error}
+        retry={() => void content.refetch()}
+      />
+    );
+  }
+
+  if (!content.data || !metadata.data) {
+    return null;
+  }
+
   return (
     <section className="panel test-preview">
       <div className="section-heading">

@@ -7,6 +7,10 @@ export const WorkspaceContext = createContext<WorkspaceContextType | null>(
 
 export const useWorkspace = () => {
   const value = useContext(WorkspaceContext);
-  if (!value) throw new Error("Workspace provider missing");
+
+  if (!value) {
+    throw new Error("Workspace provider missing");
+  }
+
   return value;
 };

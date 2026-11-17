@@ -43,8 +43,9 @@ export function SortableCards({
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={({ active, over }) => {
-        if (over && active.id !== over.id)
+        if (over && active.id !== over.id) {
           onMove(String(active.id), String(over.id));
+        }
       }}
     >
       <SortableContext

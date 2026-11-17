@@ -25,6 +25,7 @@ export const useAuthForm = (mode: AuthFormProps["mode"]) => {
 
   const submit = async (values: AuthFormType) => {
     setMessage("");
+
     if (!supabase) {
       form.setError("root", {
         message:
@@ -56,6 +57,7 @@ export const useAuthForm = (mode: AuthFormProps["mode"]) => {
 
       form.resetField("password");
       form.resetField("confirmPassword");
+
       if (data.session) {
         useAuthStore.getState().setSession(data.session);
         navigate("/", { replace: true });

@@ -41,7 +41,11 @@ export default function ActivityIndicator({
   }[musicProvider];
   const icon =
     musicProvider === "spotify" ? <SpotifyIcon /> : <Music2 size={21} />;
-  if (!timerActive && !spotifyActive) return null;
+
+  if (!timerActive && !spotifyActive) {
+    return null;
+  }
+
   const fraction = timer.durationMs
     ? Math.max(0, Math.min(1, remainingMs / timer.durationMs))
     : 0;
@@ -51,7 +55,9 @@ export default function ActivityIndicator({
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setOpen(false);
+        }
       }}
     >
       <button

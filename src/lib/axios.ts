@@ -8,10 +8,17 @@ const api = axios.create({
 
 api.interceptors.request.use(async (config) => {
   const { data, error } = await createClient().auth.getSession();
-  if (error)
+
+  if (error) {
     throw new Error("Unable to refresh your session. Please sign in again.");
+  }
+
   const token = data.session?.access_token;
-  if (!token) throw new Error("Please sign in before making this request.");
+
+  if (!token) {
+    throw new Error("Please sign in before making this request.");
+  }
+
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -23,6 +30,7 @@ api.interceptors.response.use(
   (error: unknown) => {
     if (axios.isAxiosError(error)) {
       const data: unknown = error.response?.data;
+
       if (
         data &&
         typeof data === "object" &&
@@ -32,6 +40,7 @@ api.interceptors.response.use(
         return Promise.reject(new Error(data.error));
       }
     }
+
     return Promise.reject(error);
   },
 );

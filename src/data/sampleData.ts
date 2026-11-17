@@ -109,9 +109,11 @@ export const sampleDocuments: Document[] = sampleWorkspace.documents.map(
         item.courseId === document.courseId &&
         item.noteBookName === document.notebook,
     );
+
     if (!notebook) {
       throw new Error(`Missing sample notebook for document ${document.id}`);
     }
+
     return {
       id: document.id,
       userId: sampleUserId,

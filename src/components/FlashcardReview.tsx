@@ -25,13 +25,21 @@ const FlashcardReview = ({
     setKnown(0);
   };
   const rate = (recalled: boolean) => {
-    if (!current) return;
-    if (recalled) setKnown((value) => value + 1);
-    else setMissed((items) => [...items, current]);
+    if (!current) {
+      return;
+    }
+
+    if (recalled) {
+      setKnown((value) => value + 1);
+    } else {
+      setMissed((items) => [...items, current]);
+    }
+
     setIndex((value) => value + 1);
     setFlipped(false);
   };
-  if (loading)
+
+  if (loading) {
     return (
       <SkeletonRegion label="Loading flashcard review">
         <div className="fc-review">
@@ -67,6 +75,8 @@ const FlashcardReview = ({
         </div>
       </SkeletonRegion>
     );
+  }
+
   return (
     <div className="fc-review">
       {current ? (

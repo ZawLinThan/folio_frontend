@@ -62,9 +62,11 @@ export function createCardOrderStore(accountId: string) {
 const stores = new Map<string, ReturnType<typeof createCardOrderStore>>();
 export function useCardOrderStore(accountId: string) {
   let store = stores.get(accountId);
+
   if (!store) {
     store = createCardOrderStore(accountId);
     stores.set(accountId, store);
   }
+
   return useStore(store);
 }

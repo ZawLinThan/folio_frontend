@@ -25,8 +25,11 @@ const WorkspaceProvider = ({ children }: ChildrenProps) => {
   const notebookMutation = useStudyMutation(createNotebook);
   const uploadMutation = useStudyMutation(uploadDocument);
   const deleteMutation = useStudyMutation(deleteDocument);
-  if (data.isPending && !data.error)
+
+  if (data.isPending && !data.error) {
     return <LayoutPageSkeleton pathname={pathname} />;
+  }
+
   return (
     <WorkspaceContext.Provider
       value={{
@@ -63,13 +66,15 @@ const WorkspaceProvider = ({ children }: ChildrenProps) => {
             (item) =>
               item.courseId === courseId && item.noteBookName === notebook,
           )?.id;
-          if (notebookId)
+
+          if (notebookId) {
             uploadMutation.mutate({
               file,
               courseId,
               notebookId,
               hasMathFormula,
             });
+          }
         },
         removeDocument: (id) => deleteMutation.mutate(id),
       }}

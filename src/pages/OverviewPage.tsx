@@ -9,23 +9,23 @@ import { OverviewCoursesSkeleton } from "../skeletons";
 import { studyQueries, useStudyData } from "../hooks/useStudyQueries";
 import QueryState from "../components/QueryState";
 
-import { useAuthStore } from "../stores/authStore";
 import CourseCardGrid from "../components/CourseCardGrid";
 import PageHeading from "../components/PageHeading";
 import { useQuery } from "@tanstack/react-query";
+import { useDisplayName } from "../hooks/useProfile";
 
 const OverviewPage = () => {
   const data = useStudyData();
   const { courses, notebooks, documents } = data;
   const sets = useQuery(studyQueries.sets());
   const tests = useQuery(studyQueries.tests());
-  const { user } = useAuthStore();
+  const displayName = useDisplayName();
 
   return (
     <div className="overview-page">
       <p className="eyebrow overview-kicker">Personal workspace</p>
       <PageHeading
-        title={`Welcome back, ${user?.user_metadata.full_name || "Student"}!`}
+        title={`Welcome back, ${displayName}!`}
         description="Pick up where you left off, or discover something new."
         action={
           <Link className="button" to="/documents">
