@@ -1,4 +1,3 @@
-import { SkeletonText } from "../skeletons/components";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -11,6 +10,8 @@ import {
   Check,
   Library,
 } from "lucide-react";
+
+import { SkeletonText } from "../skeletons/components";
 
 export function OverviewTotals({
   courses,

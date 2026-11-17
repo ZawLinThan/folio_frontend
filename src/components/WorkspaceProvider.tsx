@@ -1,3 +1,5 @@
+import { useLocation } from "react-router-dom";
+
 import { WorkspaceContext } from "../hooks/useWorkspace";
 import { useStudyData, useStudyMutation } from "../hooks/useStudyQueries";
 import {
@@ -8,7 +10,6 @@ import {
   uploadDocument,
 } from "../lib/studyApi";
 import { formatFileSize } from "../lib/utils";
-import { useLocation } from "react-router-dom";
 import { LayoutPageSkeleton } from "../skeletons";
 import type { ChildrenProps } from "../types/study";
 

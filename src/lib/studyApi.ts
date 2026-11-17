@@ -1,3 +1,5 @@
+import axios from "axios";
+
 import {
   sampleCourses,
   sampleDocuments,
@@ -24,7 +26,6 @@ import type {
   UploadResult,
 } from "../types";
 import api from "./axios";
-import axios from "axios";
 
 /**
  * Transport contracts use raw JSON records/arrays and ISO timestamp strings.

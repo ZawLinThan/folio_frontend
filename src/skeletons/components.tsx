@@ -1,6 +1,7 @@
-import { CourseCardContent } from "../components/CourseCard";
 import type { ReactNode } from "react";
 import { ArrowRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
+
+import { CourseCardContent } from "../components/CourseCard";
 import PageHeadingFrame from "../components/PageHeadingFrame";
 import {
   DeckSurface,
@@ -275,45 +276,73 @@ export function DocumentPreviewSkeleton({ text = false }: { text?: boolean }) {
 
 export function TestPreviewSkeleton() {
   return (
-    <section className="panel test-preview">
-      <div className="section-heading">
-        <h2>
-          <SkeletonText>Practice test</SkeletonText>
-        </h2>
-        <span className="status">
-          <SkeletonText>3 questions</SkeletonText>
-        </span>
+    <section className="test-preview">
+      <div className="test-reader-header">
+        <div>
+          <h2>
+            <SkeletonText>Practice test</SkeletonText>
+          </h2>
+          <p>
+            <SkeletonText>
+              Read each question and choose an answer.
+            </SkeletonText>
+          </p>
+        </div>
+        <button className="button" type="button">
+          <SkeletonText>Answer key</SkeletonText>
+        </button>
       </div>
-      <p className="notice">
-        <SkeletonText>Read each question and select an answer.</SkeletonText>
-      </p>
-      {[1, 2, 3].map((i) => (
-        <section className="test-question" key={i}>
-          <span className="eyebrow">
-            <SkeletonText>QUESTION {i}</SkeletonText>
-          </span>
+      <div className="test-reader">
+        <div className="test-reader-nav">
+          <div className="test-reader-progress">
+            <h3>
+              <SkeletonText>Questions</SkeletonText>
+            </h3>
+            <p>
+              <SkeletonText>0 of 10 answered</SkeletonText>
+            </p>
+            <progress value={0} max={10} />
+          </div>
+          <div className="test-reader-jump">
+            {Array.from({ length: 10 }, (_, index) => (
+              <span className="test-jump-button" key={index}>
+                <SkeletonText>{String(index + 1)}</SkeletonText>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="panel test-question">
+          <div className="test-question-meta">
+            <SkeletonText>Question 1 of 10</SkeletonText>
+          </div>
           <h3>
             <SkeletonText>
               Which answer best describes this concept?
             </SkeletonText>
           </h3>
           <fieldset>
-            {[1, 2, 3, 4].map((j) => (
-              <label className="test-option" key={j}>
-                <input type="radio" />
-                <SkeletonText>Sample answer option</SkeletonText>
-              </label>
+            {[1, 2, 3, 4].map((option) => (
+              <div className="test-option" key={option}>
+                <span className="test-option-letter">
+                  <SkeletonText>
+                    {String.fromCharCode(64 + option)}
+                  </SkeletonText>
+                </span>
+                <span className="test-option-body">
+                  <SkeletonText>Sample answer option</SkeletonText>
+                </span>
+              </div>
             ))}
           </fieldset>
-        </section>
-      ))}
-      <div className="inline-actions">
-        <button className="button primary" type="button">
-          <SkeletonText>Reveal sample answer key</SkeletonText>
-        </button>
-        <button className="button" type="button">
-          <SkeletonText>Start again</SkeletonText>
-        </button>
+          <div className="test-question-footer">
+            <button className="button" type="button">
+              <SkeletonText>Previous</SkeletonText>
+            </button>
+            <button className="button primary" type="button">
+              <SkeletonText>Next</SkeletonText>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

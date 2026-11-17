@@ -1,8 +1,9 @@
-import { MusicProviderSelector, ProviderIcon } from "./MusicProviderSelector";
-import { names, type Provider } from "../lib/music/providers";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ExternalLink, Link2, Music2 } from "lucide-react";
+
+import { MusicProviderSelector, ProviderIcon } from "./MusicProviderSelector";
+import { names, type Provider } from "../lib/music/providers";
 import SpotifyPanel from "./SpotifyPanel";
 import { musicEmbed } from "../lib/music/embeds";
 import type { Playback } from "../lib/spotify/client";

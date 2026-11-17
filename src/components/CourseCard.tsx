@@ -1,6 +1,7 @@
 import { FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
+
 import type { Course } from "../types";
 
 export function CourseCardContent({

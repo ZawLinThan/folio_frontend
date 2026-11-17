@@ -1,4 +1,5 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
 import { envSchema } from "../../zodSchema/envSchema";
 
 const config = envSchema.safeParse({

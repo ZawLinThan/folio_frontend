@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+
 import { musicEmbed } from "../src/lib/music/embeds.ts";
 
 test("YouTube music links produce trusted video and playlist embeds", () => {

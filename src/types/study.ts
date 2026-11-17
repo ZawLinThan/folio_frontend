@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import type { WorkspaceType } from "../zodSchema/studySchema";
 import type { Course } from ".";
 

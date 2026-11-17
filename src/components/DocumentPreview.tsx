@@ -1,5 +1,6 @@
-import { DocumentPreviewSkeleton } from "../skeletons";
 import { useEffect, useState } from "react";
+
+import { DocumentPreviewSkeleton } from "../skeletons";
 import { getDocumentFile } from "../lib/studyApi";
 import type { Document } from "../types";
 

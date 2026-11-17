@@ -1,8 +1,3 @@
-import {
-  ChatPageSkeleton,
-  ConversationHistorySkeleton,
-  SkeletonRegion,
-} from "../skeletons";
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -21,6 +16,12 @@ import {
   X,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import {
+  ChatPageSkeleton,
+  ConversationHistorySkeleton,
+  SkeletonRegion,
+} from "../skeletons";
 import { useStudyData } from "../hooks/useStudyQueries";
 import {
   createChatSession,
@@ -637,9 +638,7 @@ const ChatPage = () => {
                   >
                     <span className="message-avatar" aria-hidden="true">
                       {message.role === "user" ? (
-                        getNameInitials(
-                          displayName,
-                        ).slice(0, 2)
+                        getNameInitials(displayName).slice(0, 2)
                       ) : (
                         <Sparkles size={16} />
                       )}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { completeSpotifyAuthorization } from "../lib/spotify";
 
 export default function SpotifyCallbackPage() {

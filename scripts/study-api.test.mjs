@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 import { QueryClient } from "@tanstack/react-query";
+import axios from "axios";
+
 import * as api from "../src/lib/studyApi.ts";
 import transport from "../src/lib/axios.ts";
-import axios from "axios";
 import {
   studyQueries,
   studyKeys,

@@ -12,6 +12,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+
 import { useAuthStore } from "../stores/authStore";
 import { getNameInitials } from "../lib/utils";
 import Brand from "./Brand";
@@ -125,9 +126,7 @@ export default function WorkspaceSidebar({
               aria-hidden="true"
               className={loading ? "avatar skeleton sk-ui-icon" : "avatar"}
             >
-              {getNameInitials(
-                displayName,
-              )}
+              {getNameInitials(displayName)}
             </span>
             <span>
               <strong className={loading ? "skeleton sk-text" : undefined}>

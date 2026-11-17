@@ -512,7 +512,10 @@
   background: transparent;
   box-shadow: none;
 }
-.spotify-floating > :not(.spotify-floating-header):not(.spotify-embed):not(.spotify-floating-controls) {
+.spotify-floating
+  > :not(.spotify-floating-header):not(.spotify-embed):not(
+    .spotify-floating-controls
+  ) {
   display: none;
 }
 .spotify-floating .spotify-floating-header {
@@ -567,38 +570,223 @@
     bottom: 90px;
   }
 }
-.activity-indicator { position: relative; z-index: 35; }
-.activity-trigger { position: relative; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--blue); cursor: pointer; }
-.activity-countdown { position: relative; display: grid; place-items: center; width: 36px; height: 36px; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.activity-countdown svg { position: absolute; inset: 0; transform: rotate(-90deg); }
-.activity-countdown circle { fill: none; stroke-width: 3; }
-.activity-ring-track { stroke: var(--border); }
-.activity-ring-progress { stroke: var(--blue); stroke-linecap: round; transition: stroke-dasharray .3s linear; }
-.activity-spotify-dot { position: absolute; right: -4px; bottom: -3px; display: grid; place-items: center; color: #1db954; background: var(--surface); border-radius: 50%; }
-.activity-spotify-dot svg { width: 15px; height: 15px; }
-.activity-menu { position: absolute; right: 0; top: 100%; padding: 12px; width: 235px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 12px 38px rgba(22,39,60,.18); }
-.activity-menu-label { display: block; padding: 2px 7px 8px; font-size: 9px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
-.activity-menu button { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; padding: 8px; border: 0; border-radius: 9px; background: transparent; color: inherit; cursor: pointer; }
-.activity-menu button:hover, .activity-menu button:focus-visible { background: var(--blue-surface); }
-.activity-menu button > span:last-child { display: grid; min-width: 0; gap: 3px; }
-.activity-menu strong { font-size: 13px; }
-.activity-menu small { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.activity-menu-symbol { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 10px; background: var(--blue-surface); color: var(--blue); font-size: 23px; }
-.spotify-symbol { color: #1db954; }
-.spotify-current-floating { position: fixed; z-index: 29; right: 24px; bottom: 100px; display: flex; gap: 18px; align-items: start; width: min(300px, calc(100vw - 32px)); padding: 16px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); box-shadow: 0 12px 38px rgba(22,39,60,.18); }
-.spotify-current-copy { display: grid; gap: 5px; min-width: 0; flex: 1; }
-.spotify-current-copy strong, .spotify-current-copy > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.spotify-current-copy > span:last-child { color: var(--muted); font-size: 12px; }
-@media (prefers-reduced-motion: reduce) { .activity-ring-progress { transition: none; } }
-.spotify-floating.spotify-embed-only > :not(.spotify-embed):not(.spotify-floating-controls) { display: none; }
-.spotify-floating-controls { display: flex; justify-content: flex-end; padding: 4px; background: transparent; }
-.spotify-floating-controls.has-embed .spotify-current-copy { display: none; }
-.spotify-floating-controls:not(.has-embed) .spotify-current-copy { padding: 8px; background: var(--surface); border-radius: 10px; }
-.spotify-floating-controls .floating-timer-close { flex: none; margin-left: auto; background: var(--surface); color: var(--text); }
-.spotify-floating .spotify-embed iframe { height: min(352px, max(80px, calc(100dvh - 220px))); }
-.spotify-floating { max-height: calc(100dvh - 110px); overflow-y: auto; }
+.activity-indicator {
+  position: relative;
+  z-index: 35;
+}
+.activity-trigger {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--blue);
+  cursor: pointer;
+}
+.activity-countdown {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.activity-countdown svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.activity-countdown circle {
+  fill: none;
+  stroke-width: 3;
+}
+.activity-ring-track {
+  stroke: var(--border);
+}
+.activity-ring-progress {
+  stroke: var(--blue);
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s linear;
+}
+.activity-spotify-dot {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  color: #1db954;
+  background: var(--surface);
+  border-radius: 50%;
+}
+.activity-spotify-dot svg {
+  width: 15px;
+  height: 15px;
+}
+.activity-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  padding: 12px;
+  width: 235px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 12px 38px rgba(22, 39, 60, 0.18);
+}
+.activity-menu-label {
+  display: block;
+  padding: 2px 7px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.activity-menu button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.activity-menu button:hover,
+.activity-menu button:focus-visible {
+  background: var(--blue-surface);
+}
+.activity-menu button > span:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.activity-menu strong {
+  font-size: 13px;
+}
+.activity-menu small {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activity-menu-symbol {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--blue-surface);
+  color: var(--blue);
+  font-size: 23px;
+}
+.spotify-symbol {
+  color: #1db954;
+}
+.spotify-current-floating {
+  position: fixed;
+  z-index: 29;
+  right: 24px;
+  bottom: 100px;
+  display: flex;
+  gap: 18px;
+  align-items: start;
+  width: min(300px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--surface);
+  box-shadow: 0 12px 38px rgba(22, 39, 60, 0.18);
+}
+.spotify-current-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  flex: 1;
+}
+.spotify-current-copy strong,
+.spotify-current-copy > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spotify-current-copy > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .activity-ring-progress {
+    transition: none;
+  }
+}
+.spotify-floating.spotify-embed-only
+  > :not(.spotify-embed):not(.spotify-floating-controls) {
+  display: none;
+}
+.spotify-floating-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px;
+  background: transparent;
+}
+.spotify-floating-controls.has-embed .spotify-current-copy {
+  display: none;
+}
+.spotify-floating-controls:not(.has-embed) .spotify-current-copy {
+  padding: 8px;
+  background: var(--surface);
+  border-radius: 10px;
+}
+.spotify-floating-controls .floating-timer-close {
+  flex: none;
+  margin-left: auto;
+  background: var(--surface);
+  color: var(--text);
+}
+.spotify-floating .spotify-embed iframe {
+  height: min(352px, max(80px, calc(100dvh - 220px)));
+}
+.spotify-floating {
+  max-height: calc(100dvh - 110px);
+  overflow-y: auto;
+}
 
-.music-provider-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
-.music-provider-selector button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 9px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; }
-.music-provider-selector button.selected { color: var(--text); background: var(--timer-soft); border-color: var(--blue); }
-.music-provider-selector svg, .spotify-heading h2 > svg { width: 21px; height: 21px; flex: none; }
+.music-provider-selector {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.music-provider-selector button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.music-provider-selector button.selected {
+  color: var(--text);
+  background: var(--timer-soft);
+  border-color: var(--blue);
+}
+.music-provider-selector svg,
+.spotify-heading h2 > svg {
+  width: 21px;
+  height: 21px;
+  flex: none;
+}

@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 /** Legacy presentation model for the unchanged study assistant, not an API DTO. */
 export const courseSchema = z.object({
   id: z.string(),

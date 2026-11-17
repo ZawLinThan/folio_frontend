@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+
 import { readyDocumentsInScope } from "../src/lib/chatScope.ts";
 import {
   createChatSession,

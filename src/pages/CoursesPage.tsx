@@ -1,7 +1,8 @@
-import { SearchField } from "../components/StudySurfaces";
-import { CoursesContentSkeleton } from "../skeletons";
 import { useState } from "react";
 import { Plus } from "lucide-react";
+
+import { SearchField } from "../components/StudySurfaces";
+import { CoursesContentSkeleton } from "../skeletons";
 import { useStudyData, useStudyMutation } from "../hooks/useStudyQueries";
 import { createCourse } from "../lib/studyApi";
 import CourseCardGrid from "../components/CourseCardGrid";

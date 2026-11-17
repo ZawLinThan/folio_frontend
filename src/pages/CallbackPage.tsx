@@ -1,4 +1,5 @@
 import { Link, Navigate } from "react-router-dom";
+
 import { useAuthStore } from "../stores/authStore";
 
 const CallbackPage = () => {

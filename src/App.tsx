@@ -1,6 +1,9 @@
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+
 import SpotifyCallbackPage from "./pages/SpotifyCallbackPage";
 import { spotify } from "./lib/spotify";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import LayoutPage from "./pages/LayoutPage";
 import LandingPage from "./pages/LandingPage";
 import OverviewPage from "./pages/OverviewPage";
@@ -20,8 +23,6 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { useAuthStore } from "./stores/authStore";
 import ProtectedRoute from "./components/ProtectedRoute";
 import WorkspaceProvider from "./components/WorkspaceProvider";
-import { useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { studyKeys } from "./hooks/useStudyQueries";
 
 function WorkspaceRoute() {
