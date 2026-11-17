@@ -44,7 +44,8 @@ export default function MusicPanel({
       }}
     />
   );
-  if (provider === "spotify")
+
+  if (provider === "spotify") {
     return (
       <SpotifyPanel
         onPlayback={onPlayback}
@@ -54,6 +55,8 @@ export default function MusicPanel({
         selector={selector}
       />
     );
+  }
+
   const name = names[provider];
   const home =
     provider === "youtube"
@@ -104,12 +107,14 @@ export default function MusicPanel({
         onSubmit={(event) => {
           event.preventDefault();
           const next = musicEmbed(provider, link);
+
           if (!next) {
             setError(
               `Paste a valid ${name} ${provider === "youtube" ? "video or playlist" : "song, album, or playlist"} link.`,
             );
             return;
           }
+
           setLoaded((previous) => ({
             embed: next,
             link: link.trim(),

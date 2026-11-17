@@ -4,10 +4,14 @@ import type { ThemeType } from "../zodSchema/themeSchema";
 const initialTheme = (): ThemeType => {
   try {
     const saved = themeSchema.safeParse(localStorage.getItem("folio-theme"));
-    if (saved.success) return saved.data;
+
+    if (saved.success) {
+      return saved.data;
+    }
   } catch {
     /* Use system preference when storage is unavailable. */
   }
+
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
@@ -16,6 +20,7 @@ export const useTheme = () => {
   const [theme, setTheme] = useState(initialTheme);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
+
     try {
       localStorage.setItem("folio-theme", theme);
     } catch {

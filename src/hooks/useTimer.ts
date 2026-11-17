@@ -14,6 +14,10 @@ export type TimerContextValue = {
 export const TimerContext = createContext<TimerContextValue | null>(null);
 export function useTimer() {
   const value = useContext(TimerContext);
-  if (!value) throw new Error("TimerProvider is required");
+
+  if (!value) {
+    throw new Error("TimerProvider is required");
+  }
+
   return value;
 }

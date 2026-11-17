@@ -44,7 +44,8 @@ const CoursePage = () => {
   });
   const moveNotebook = (from: string, to: string) => {
     setSelected(notebookId);
-    if (courseId)
+
+    if (courseId) {
       setNotebooks(
         courseId,
         reorderIds(
@@ -53,6 +54,7 @@ const CoursePage = () => {
           to,
         ),
       );
+    }
   };
   const notebookId = notebooks.some((notebook) => notebook.id === selected)
     ? selected
@@ -65,7 +67,7 @@ const CoursePage = () => {
     data.error ||
     notebookQuery.isLoading ||
     notebookQuery.error
-  )
+  ) {
     return (
       <QueryState
         pending={data.isPending || notebookQuery.isLoading}
@@ -77,13 +79,15 @@ const CoursePage = () => {
         }}
       />
     );
+  }
 
-  if (!course)
+  if (!course) {
     return (
       <div className="empty">
         Course not found. <Link to="/courses">Back to courses</Link>
       </div>
     );
+  }
 
   return (
     <div className="course-page study-page">

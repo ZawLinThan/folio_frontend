@@ -55,7 +55,10 @@ const App = () => {
     let previousUserId = useAuthStore.getState().user?.id;
     const unsubscribeIdentity = useAuthStore.subscribe((state) => {
       if (state.user?.id !== previousUserId) {
-        if (previousUserId) spotify.disconnect();
+        if (previousUserId) {
+          spotify.disconnect();
+        }
+
         previousUserId = state.user?.id;
         // Never reuse one account's server records after an account switch.
         queryClient.removeQueries({ queryKey: studyKeys.all });

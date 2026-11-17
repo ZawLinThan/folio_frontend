@@ -18,9 +18,11 @@ export const supabase = config.success
   : null;
 
 export const createClient = () => {
-  if (!supabase)
+  if (!supabase) {
     throw new Error(
       "Add your Supabase URL and publishable key to frontend/.env.",
     );
+  }
+
   return supabase;
 };

@@ -37,8 +37,8 @@ import { questionSchema } from "../zodSchema/studySchema";
 import PageHeading from "../components/PageHeading";
 import Modal from "../components/Modal";
 import QueryState from "../components/QueryState";
-import { useAuthStore } from "../stores/authStore";
 import { getNameInitials } from "../lib/utils";
+import { useDisplayName } from "../hooks/useProfile";
 
 type ChatMessage = {
   id: string;
@@ -55,7 +55,7 @@ const getHistoryTitle = (item: ChatSessionSummary) =>
 
 const ChatPage = () => {
   const data = useStudyData();
-  const user = useAuthStore((state) => state.user);
+  const displayName = useDisplayName();
   const queryClient = useQueryClient();
   const history = useQuery({
     queryKey: historyKey,
@@ -110,7 +110,10 @@ const ChatPage = () => {
 
   useEffect(() => {
     const element = transcript.current;
-    if (element) element.scrollTop = element.scrollHeight;
+
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
   }, [messages, activity, data.isPending, data.error]);
 
   const clearConversation = () => {
@@ -121,16 +124,22 @@ const ChatPage = () => {
   };
 
   const reset = () => {
-    if (!lock.current) clearConversation();
+    if (!lock.current) {
+      clearConversation();
+    }
   };
 
   const updateHistory = async (
     change: { id: string; title: string } | { id: string },
   ) => {
-    if (lock.current) return;
+    if (lock.current) {
+      return;
+    }
+
     setHistoryError("");
     const { id } = change;
     const title = "title" in change ? change.title.trim() : null;
+
     if (title !== null && (!title || title.length > 255)) {
       setHistoryError("Enter a title between 1 and 255 characters.");
       return;
@@ -138,19 +147,23 @@ const ChatPage = () => {
 
     lock.current = true;
     setActivity("editing");
+
     try {
       let updatedTitle: string | null = null;
+
       if (title !== null) {
         updatedTitle = (await renameChatSession(id, title)).title;
         setTitleEdit(null);
       } else {
         await deleteChatSession(id);
         setDeleteTarget(null);
+
         if (session?.id === id) {
           clearConversation();
           setQuestion("");
         }
       }
+
       await queryClient.cancelQueries({ queryKey: historyKey });
       queryClient.setQueryData<ChatSessionSummary[]>(historyKey, (previous) =>
         title !== null
@@ -171,28 +184,40 @@ const ChatPage = () => {
   };
 
   const cancelTitleEdit = () => {
-    if (lock.current) return;
+    if (lock.current) {
+      return;
+    }
+
     setTitleEdit(null);
     setHistoryError("");
   };
 
   const closeDeleteModal = () => {
-    if (lock.current) return;
+    if (lock.current) {
+      return;
+    }
+
     setDeleteTarget(null);
     setHistoryError("");
   };
 
   const ask = async (value: string) => {
-    if (lock.current) return;
+    if (lock.current) {
+      return;
+    }
+
     const result = questionSchema.safeParse({ question: value });
+
     if (!result.success) {
       setError(result.error.issues[0].message);
       return;
     }
+
     if (!sources.length) {
       setError("No ready documents are available in this selection.");
       return;
     }
+
     const text = result.data.question;
     const pendingMessage: ChatMessage = {
       id: `outgoing-${++messageSequence.current}`,
@@ -207,6 +232,7 @@ const ChatPage = () => {
       scopeChanged ? [pendingMessage] : [...previous, pendingMessage],
     );
     let activeSession = session;
+
     try {
       if (!activeSession || scopeChanged) {
         const id = await createChatSession(sources.map((item) => item.id));
@@ -216,6 +242,7 @@ const ChatPage = () => {
           queryKey: historyKey,
         });
       }
+
       const answer = await sendChatMessage(activeSession.id, text);
       setMessages((previous) => [
         ...previous.map((message) =>
@@ -252,10 +279,14 @@ const ChatPage = () => {
   };
 
   const openSession = async (id: string) => {
-    if (lock.current) return;
+    if (lock.current) {
+      return;
+    }
+
     lock.current = true;
     setActivity("opening");
     setError("");
+
     try {
       const saved = await getChatSession(id);
       setRestoredIds(saved.documentIds);
@@ -274,7 +305,11 @@ const ChatPage = () => {
       const first = data.documents.find((document) =>
         saved.documentIds.includes(document.id),
       );
-      if (first?.courseId) setCourse(first.courseId);
+
+      if (first?.courseId) {
+        setCourse(first.courseId);
+      }
+
       setNotebook("");
       setFile("");
       setQuestion("");
@@ -291,7 +326,7 @@ const ChatPage = () => {
     }
   };
 
-  if (data.isPending || data.error)
+  if (data.isPending || data.error) {
     return (
       <QueryState
         pending={data.isPending}
@@ -300,6 +335,7 @@ const ChatPage = () => {
         retry={data.refetch}
       />
     );
+  }
 
   return (
     <div className="study-assistant study-page">
@@ -369,7 +405,9 @@ const ChatPage = () => {
                     void updateHistory(titleEdit);
                   }}
                   onKeyDown={(event) => {
-                    if (event.key === "Escape") cancelTitleEdit();
+                    if (event.key === "Escape") {
+                      cancelTitleEdit();
+                    }
                   }}
                 >
                   <input
@@ -600,9 +638,7 @@ const ChatPage = () => {
                     <span className="message-avatar" aria-hidden="true">
                       {message.role === "user" ? (
                         getNameInitials(
-                          user?.user_metadata?.full_name ||
-                            user?.email ||
-                            "Student",
+                          displayName,
                         ).slice(0, 2)
                       ) : (
                         <Sparkles size={16} />
@@ -672,8 +708,10 @@ const ChatPage = () => {
                     !event.nativeEvent.isComposing
                   ) {
                     event.preventDefault();
-                    if (question.trim() && !busy && sources.length)
+
+                    if (question.trim() && !busy && sources.length) {
                       void ask(question);
+                    }
                   }
                 }}
               />

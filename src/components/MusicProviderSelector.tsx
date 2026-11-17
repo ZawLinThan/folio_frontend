@@ -1,14 +1,16 @@
 import { names, type Provider } from "../lib/music/providers";
 
 export function ProviderIcon({ provider }: { provider: Provider }) {
-  if (provider === "youtube")
+  if (provider === "youtube") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="11" fill="#ff0033" />
         <path d="m10 7.5 7 4.5-7 4.5z" fill="white" />
       </svg>
     );
-  if (provider === "apple")
+  }
+
+  if (provider === "apple") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <rect x="1" y="1" width="22" height="22" rx="6" fill="#fa2d48" />
@@ -18,6 +20,8 @@ export function ProviderIcon({ provider }: { provider: Provider }) {
         />
       </svg>
     );
+  }
+
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="11" fill="#1db954" />
@@ -51,7 +55,9 @@ export function MusicProviderSelector({
           className={option === provider ? "selected" : ""}
           aria-pressed={option === provider}
           onClick={() => {
-            if (option !== provider) onChange?.(option);
+            if (option !== provider) {
+              onChange?.(option);
+            }
           }}
         >
           <ProviderIcon provider={option} />

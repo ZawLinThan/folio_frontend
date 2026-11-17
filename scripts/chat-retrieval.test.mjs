@@ -24,10 +24,14 @@ test("rename and delete target the saved conversation", async (t) => {
     title,
   });
   await deleteChatSession("session");
-  assert.deepEqual(patch.mock.calls.map(({ arguments: args }) => args), [
-    [path, { title }],
-  ]);
-  assert.deepEqual(remove.mock.calls.map(({ arguments: args }) => args), [[path]]);
+  assert.deepEqual(
+    patch.mock.calls.map(({ arguments: args }) => args),
+    [[path, { title }]],
+  );
+  assert.deepEqual(
+    remove.mock.calls.map(({ arguments: args }) => args),
+    [[path]],
+  );
 });
 
 test("scope includes only ready documents in the chosen course, notebook and file", () => {
@@ -70,6 +74,7 @@ test("loads chat history and saved session details", async () => {
             },
     };
   };
+
   try {
     assert.equal((await getChatSessions())[0].id, "session");
     const saved = await getChatSession("session");
@@ -96,6 +101,7 @@ test("chat sends document IDs and questions to the backend endpoints", async () 
           : { answer: "Answer", sources: [] },
     };
   };
+
   try {
     const session = await createChatSession(["doc-1", "doc-2"]);
     const response = await sendChatMessage(session, "Question?");

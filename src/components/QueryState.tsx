@@ -12,7 +12,7 @@ const QueryState = ({
   retry?: () => unknown;
   skeleton?: ReactNode;
 }) => {
-  if (error)
+  if (error) {
     return (
       <div className="notice" role="alert">
         <p>{error.message}</p>
@@ -23,8 +23,12 @@ const QueryState = ({
         )}
       </div>
     );
-  if (pending)
+  }
+
+  if (pending) {
     return <SkeletonRegion label="Loading content">{skeleton}</SkeletonRegion>;
+  }
+
   return null;
 };
 

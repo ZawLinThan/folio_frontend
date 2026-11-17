@@ -2,7 +2,9 @@ export { cn } from "cn";
 
 /** Format a size in bytes using 1024-byte units and up to two decimal places. */
 export const formatFileSize = (bytes: number): string => {
-  if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+  if (!Number.isFinite(bytes) || bytes <= 0) {
+    return "0 B";
+  }
 
   const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
   const unitIndex = Math.min(

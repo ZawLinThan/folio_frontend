@@ -40,7 +40,10 @@ export default function CourseCardGrid({
   const move = (fromId: string, toId: string) => {
     const current = ordered.map((item) => item.id);
     const ids = reorderIds(current, fromId, toId);
-    if (ids !== current) setCourses(ids);
+
+    if (ids !== current) {
+      setCourses(ids);
+    }
   };
   return (
     <SortableCards ids={visible.map((course) => course.id)} grid onMove={move}>

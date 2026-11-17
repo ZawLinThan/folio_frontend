@@ -25,7 +25,10 @@ export function useFloatingDrag(active: boolean) {
     };
   };
   useEffect(() => {
-    if (!active || !element.current) return;
+    if (!active || !element.current) {
+      return;
+    }
+
     const resize = () =>
       setPosition((value) => (value ? constrain(value.x, value.y) : null));
     const observer = new ResizeObserver(resize);
@@ -37,9 +40,16 @@ export function useFloatingDrag(active: boolean) {
     };
   }, [active]);
   const onPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
-    if (event.button !== 0) return;
+    if (event.button !== 0) {
+      return;
+    }
+
     const rect = element.current?.getBoundingClientRect();
-    if (!rect) return;
+
+    if (!rect) {
+      return;
+    }
+
     start.current = {
       x: event.clientX,
       y: event.clientY,
@@ -51,13 +61,15 @@ export function useFloatingDrag(active: boolean) {
   };
   const onPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
     const value = start.current;
-    if (value)
+
+    if (value) {
       setPosition(
         constrain(
           value.left + event.clientX - value.x,
           value.top + event.clientY - value.y,
         ),
       );
+    }
   };
   const onPointerUp = (event: PointerEvent<HTMLButtonElement>) => {
     onPointerMove(event);
@@ -72,7 +84,11 @@ export function useFloatingDrag(active: boolean) {
     };
     const delta = direction[event.key];
     const rect = element.current?.getBoundingClientRect();
-    if (!delta || !rect) return;
+
+    if (!delta || !rect) {
+      return;
+    }
+
     event.preventDefault();
     const step = event.shiftKey ? 40 : 10;
     setPosition(

@@ -9,15 +9,18 @@ export default function SpotifyCallbackPage() {
     let active = true;
     void completeSpotifyAuthorization()
       .then(() => {
-        if (active) navigate("/timer", { replace: true });
+        if (active) {
+          navigate("/timer", { replace: true });
+        }
       })
       .catch((error) => {
-        if (active)
+        if (active) {
           setError(
             error instanceof Error
               ? error.message
               : "Could not connect Spotify.",
           );
+        }
       });
     return () => {
       active = false;

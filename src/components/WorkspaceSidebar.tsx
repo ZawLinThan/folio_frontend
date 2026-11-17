@@ -15,6 +15,7 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import { getNameInitials } from "../lib/utils";
 import Brand from "./Brand";
+import { useDisplayName } from "../hooks/useProfile";
 
 const navigation = [
   {
@@ -45,21 +46,30 @@ export default function WorkspaceSidebar({
   loading?: boolean;
 }) {
   const { user } = useAuthStore();
+  const displayName = useDisplayName();
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
 
   const closeMenu = () => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
+
     setOpen(false);
+
     // Keep focus visible when a mobile navigation link closes the menu.
-    if (menuButton.current?.getClientRects().length) menuButton.current.focus();
+    if (menuButton.current?.getClientRects().length) {
+      menuButton.current.focus();
+    }
   };
 
   return (
     <aside
       className="sidebar"
       onKeyDown={(event) => {
-        if (event.key === "Escape" && open) closeMenu();
+        if (event.key === "Escape" && open) {
+          closeMenu();
+        }
       }}
     >
       <div className="sidebar-heading">
@@ -116,12 +126,12 @@ export default function WorkspaceSidebar({
               className={loading ? "avatar skeleton sk-ui-icon" : "avatar"}
             >
               {getNameInitials(
-                user?.user_metadata.full_name || user?.email || "Student",
+                displayName,
               )}
             </span>
             <span>
               <strong className={loading ? "skeleton sk-text" : undefined}>
-                {user?.user_metadata.full_name || "Student"}
+                {displayName}
               </strong>
               <small>{user?.email}</small>
             </span>

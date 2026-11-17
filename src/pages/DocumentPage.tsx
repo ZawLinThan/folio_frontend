@@ -21,7 +21,8 @@ const DocumentPage = () => {
   const rename = useStudyMutation(renameDocument);
   const [name, setName] = useState("");
   const [editing, setEditing] = useState(false);
-  if (query.isPending || query.error || data.error)
+
+  if (query.isPending || query.error || data.error) {
     return (
       <QueryState
         pending={query.isPending}
@@ -33,8 +34,14 @@ const DocumentPage = () => {
         }}
       />
     );
+  }
+
   const document = query.data;
-  if (!document) return <p className="empty">Document not found.</p>;
+
+  if (!document) {
+    return <p className="empty">Document not found.</p>;
+  }
+
   return (
     <div className="document-page study-page">
       <Link className="back-link" to="/documents">

@@ -34,10 +34,14 @@ const FileUpload = ({
   const unavailable = disabled || busy || !courseId || !notebookId;
 
   const handleFiles = (files: FileList | null) => {
-    if (!files || unavailable || lock.current) return;
+    if (!files || unavailable || lock.current) {
+      return;
+    }
+
     setMessages([]);
     setErrors([]);
     const valid: { file: File; hasMathFormula: null }[] = [];
+
     for (const file of Array.from(files).slice(
       0,
       multiple ? files.length : 1,
@@ -58,6 +62,7 @@ const FileUpload = ({
         valid.push({ file, hasMathFormula: null });
       }
     }
+
     setPendingFiles(valid);
   };
 
@@ -66,14 +71,18 @@ const FileUpload = ({
       unavailable ||
       lock.current ||
       pendingFiles.some((item) => item.hasMathFormula === null)
-    )
+    ) {
       return;
+    }
+
     lock.current = true;
     setBusy(true);
     setMessages([]);
     setErrors([]);
+
     try {
       const failed: typeof pendingFiles = [];
+
       for (const { file, hasMathFormula } of pendingFiles) {
         try {
           const result = await upload.mutateAsync({
@@ -95,6 +104,7 @@ const FileUpload = ({
           ]);
         }
       }
+
       setPendingFiles(failed);
     } finally {
       lock.current = false;

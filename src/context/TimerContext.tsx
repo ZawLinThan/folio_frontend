@@ -29,9 +29,13 @@ export function TimerProvider({
   });
   const setFloatingHidden = (hidden: boolean) => {
     updateFloatingHidden(hidden);
+
     try {
-      if (hidden) localStorage.setItem(visibilityKey, "true");
-      else localStorage.removeItem(visibilityKey);
+      if (hidden) {
+        localStorage.setItem(visibilityKey, "true");
+      } else {
+        localStorage.removeItem(visibilityKey);
+      }
     } catch {
       /* Keep visibility in memory when storage is unavailable. */
     }
@@ -51,14 +55,20 @@ export function TimerProvider({
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     try {
-      if (timer.status === "idle") localStorage.removeItem(storageKey);
-      else localStorage.setItem(storageKey, JSON.stringify(timer));
+      if (timer.status === "idle") {
+        localStorage.removeItem(storageKey);
+      } else {
+        localStorage.setItem(storageKey, JSON.stringify(timer));
+      }
     } catch {
       /* The countdown still works without storage. */
     }
   }, [timer, storageKey]);
   useEffect(() => {
-    if (timer.status !== "running") return;
+    if (timer.status !== "running") {
+      return;
+    }
+
     const update = () => {
       const time = Date.now();
       setNow(time);
@@ -73,7 +83,10 @@ export function TimerProvider({
     };
   }, [timer.status]);
   const start = (minutes: number) => {
-    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 240) return;
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 240) {
+      return;
+    }
+
     const time = Date.now();
     setNow(time);
     setFloatingHidden(false);

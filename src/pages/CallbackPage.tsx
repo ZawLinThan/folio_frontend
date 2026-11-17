@@ -5,13 +5,19 @@ const CallbackPage = () => {
   const { session, error, isLoading: loading } = useAuthStore();
   const params = new URLSearchParams(window.location.search);
   const callbackError = params.get("error_description");
-  if (loading)
+
+  if (loading) {
     return (
       <div className="panel completion route-message" role="status">
         <h1>Completing secure sign-in…</h1>
       </div>
     );
-  if (session) return <Navigate to="/" replace />;
+  }
+
+  if (session) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="panel completion route-message">
       <h1>Sign-in couldn’t be completed.</h1>

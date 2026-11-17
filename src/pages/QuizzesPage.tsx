@@ -86,7 +86,10 @@ const QuizzesPage = () => {
             onClick={() => {
               if (!checked) {
                 setChecked(true);
-                if (selected === question.answer) setScore(score + 1);
+
+                if (selected === question.answer) {
+                  setScore(score + 1);
+                }
               } else {
                 setIndex(index + 1);
                 setSelected("");

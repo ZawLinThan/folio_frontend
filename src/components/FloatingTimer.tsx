@@ -15,7 +15,11 @@ export default function FloatingTimer() {
   } = useTimer();
   const visible =
     !floatingHidden && pathname !== "/timer" && timer.status !== "idle";
-  if (!visible) return null;
+
+  if (!visible) {
+    return null;
+  }
+
   return (
     <aside
       className={`floating-timer ${timer.status}`}

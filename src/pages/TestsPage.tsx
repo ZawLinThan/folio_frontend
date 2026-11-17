@@ -20,7 +20,15 @@ import type { UploadResult } from "../types";
 
 const TestsPage = () => {
   const data = useStudyData();
-  const tests = useQuery(studyQueries.tests());
+  const tests = useQuery({
+    ...studyQueries.tests(),
+    refetchInterval: (query) =>
+      query.state.data?.some(
+        (test) => test.status === "queued" || test.status === "processing",
+      )
+        ? 2000
+        : false,
+  });
   const generate = useStudyMutation(generateTest);
   const remove = useStudyMutation(deleteTest);
   const [params] = useSearchParams();
@@ -257,6 +265,15 @@ const TestsPage = () => {
                         ? "Based on a sample test"
                         : "Generated practice"}{" "}
                       · {new Date(test.createdAt).toLocaleDateString()}
+                    </small>
+                    <small>
+                      {test.status === "processing"
+                        ? "Generating"
+                        : test.status === "queued"
+                          ? "Queued"
+                          : test.status === "failed"
+                            ? "Failed"
+                            : "Ready"}
                     </small>
                   </button>
                 }

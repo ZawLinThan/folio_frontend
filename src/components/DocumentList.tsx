@@ -26,7 +26,9 @@ const DocumentList = ({
   const [deletedName, setDeletedName] = useState("");
   const deleting = useRef(false);
   const close = () => {
-    if (!deleting.current) setTarget(null);
+    if (!deleting.current) {
+      setTarget(null);
+    }
   };
 
   return (
@@ -80,7 +82,11 @@ const DocumentList = ({
             className="inline-form record-edit-form"
             onSubmit={(event) => {
               event.preventDefault();
-              if (deleting.current) return;
+
+              if (deleting.current) {
+                return;
+              }
+
               deleting.current = true;
               remove.mutate(target.id, {
                 onSuccess: () => {

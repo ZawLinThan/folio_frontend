@@ -31,9 +31,13 @@ export const authSchema = signInSchema
     confirmPassword: z.string(),
   })
   .superRefine((data, context) => {
-    if (data.mode !== "signup") return;
+    if (data.mode !== "signup") {
+      return;
+    }
+
     const result = signUpSchema.safeParse(data);
-    if (!result.success)
+
+    if (!result.success) {
       result.error.issues.forEach((issue) =>
         context.addIssue({
           code: "custom",
@@ -41,5 +45,6 @@ export const authSchema = signInSchema
           path: issue.path,
         }),
       );
+    }
   });
 export type AuthFormType = z.infer<typeof authSchema>;

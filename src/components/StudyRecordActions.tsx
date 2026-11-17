@@ -25,11 +25,19 @@ export default function StudyRecordActions({
   const save = useMutation({
     mutationFn: async () => {
       if (mode === "delete") {
-        if (kind === "course") await deleteCourse(id);
-        else await deleteNotebook(id);
+        if (kind === "course") {
+          await deleteCourse(id);
+        } else {
+          await deleteNotebook(id);
+        }
+
         return;
       }
-      if (kind === "course") return renameCourse({ id, name: draft });
+
+      if (kind === "course") {
+        return renameCourse({ id, name: draft });
+      }
+
       return editNotebook({ id, noteBookName: draft });
     },
     onSuccess: async () => {

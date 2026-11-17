@@ -43,8 +43,6 @@ let courses = clone(sampleCourses);
 let documents = clone(sampleDocuments);
 let sets: FlashcardSet[] = [];
 let cards: Flashcard[] = [];
-let tests: Test[] = [];
-let contents: TestContent[] = [];
 
 /** Build a sample card with scheduling defaults. */
 const makeCard = (setId: string, input: CardInput): Flashcard => {
@@ -91,14 +89,20 @@ const requireRecord = <T extends { id: string }>(
   label: string,
 ): T => {
   const item = items.find((record) => record.id === id);
-  if (!item) throw new Error(`${label} not found.`);
+
+  if (!item) {
+    throw new Error(`${label} not found.`);
+  }
+
   return item;
 };
 
 /** Validate and trim a sample text field. */
 const requireText = (text: string, max: number, label: string) => {
-  if (!text.trim() || text.trim().length > max)
+  if (!text.trim() || text.trim().length > max) {
     throw new Error(`${label} must be between 1 and ${max} characters.`);
+  }
+
   return text.trim();
 };
 
@@ -234,8 +238,9 @@ export const uploadDocument = async (
     notebookId: input.notebookId,
   });
 
-  if (!validation.success)
+  if (!validation.success) {
     throw new Error("Choose a non-empty PDF, DOCX, or TXT file up to 20 MB.");
+  }
 
   const signed = await getPresignedUrl(input.file);
 
@@ -252,6 +257,7 @@ export const uploadDocument = async (
         `Upload failed: ${error.response?.status ?? error.message}`,
       );
     }
+
     throw error;
   }
 
@@ -389,7 +395,7 @@ export const addFlashcard = async ({
   //   input,
   // );
   // return data;
-  console.log(input); 
+  console.log(input);
   const dummy: Flashcard = {
     id: "",
     setId: "",
@@ -401,8 +407,8 @@ export const addFlashcard = async ({
     repetitions: 0,
     nextReviewAt: "",
     createdAt: "",
-    updatedAt: ""
-  }
+    updatedAt: "",
+  };
   return dummy;
 };
 
@@ -421,8 +427,8 @@ export const updateFlashcard = async ({
   //   input,
   // );
   // return data;
-  console.log(input); 
-  const dummy:Flashcard = {
+  console.log(input);
+  const dummy: Flashcard = {
     id: "",
     setId: "",
     front: "",
@@ -433,9 +439,9 @@ export const updateFlashcard = async ({
     repetitions: 0,
     nextReviewAt: "",
     createdAt: "",
-    updatedAt: ""
-  }
-  return dummy; 
+    updatedAt: "",
+  };
+  return dummy;
 };
 
 /**
@@ -472,10 +478,8 @@ export const deleteFlashcardSet = async (_id: string): Promise<void> => {
  * @returns Raw Test array.
  */
 export const getTests = async (): Promise<Test[]> => {
-  // const { data } = await api.get<Test[]>("/api/tests");
-  // return data;
-
-  return response(tests);
+  const { data } = await api.get<Test[]>("/api/tests");
+  return data;
 };
 
 /**
@@ -484,10 +488,8 @@ export const getTests = async (): Promise<Test[]> => {
  * @returns Test record.
  */
 export const getTest = async (id: string): Promise<Test> => {
-  // const { data } = await api.get<Test>(`/api/tests/${encodeURIComponent(id)}`);
-  // return data;
-
-  return response(requireRecord(tests, id, "Test"));
+  const { data } = await api.get<Test>(`/api/tests/${encodeURIComponent(id)}`);
+  return data;
 };
 
 /**
@@ -496,14 +498,10 @@ export const getTest = async (id: string): Promise<Test> => {
  * @returns TestContent record.
  */
 export const getTestContent = async (id: string): Promise<TestContent> => {
-  // const { data } = await api.get<TestContent>(
-  //   `/api/tests/${encodeURIComponent(id)}/content`,
-  // );
-  // return data;
-
-  const content = contents.find((item) => item.testId === id);
-  if (!content) throw new Error("Test content is unavailable.");
-  return response(content);
+  const { data } = await api.get<TestContent>(
+    `/api/tests/${encodeURIComponent(id)}/content`,
+  );
+  return data;
 };
 
 /**
@@ -511,19 +509,9 @@ export const getTestContent = async (id: string): Promise<TestContent> => {
  * @param input - Title, notebook, mode, and optional reference file/URL.
  * @returns Persisted test metadata; content is fetched separately.
  */
-export const generateTest = async (_input: GenerateTestInput): Promise<Test> => {
-  // const { data } = await api.post<Test>("/api/tests/generate", input);
-  // return data;
-
-  const dummy: Test = {
-    id: "",
-    userId: "",
-    title: "",
-    referenceFileId: "",
-    createdAt: "",
-    updatedAt: ""
-  }
-  return dummy;
+export const generateTest = async (input: GenerateTestInput): Promise<Test> => {
+  const { data } = await api.post<Test>("/api/tests/generate", input);
+  return data;
 };
 
 /**
@@ -531,9 +519,8 @@ export const generateTest = async (_input: GenerateTestInput): Promise<Test> => 
  * @param id - Owned test ID.
  * @returns No body (204).
  */
-export const deleteTest = async (_id: string): Promise<void> => {
-  // await api.delete(`/api/tests/${encodeURIComponent(id)}`);
-  // return;
+export const deleteTest = async (id: string): Promise<void> => {
+  await api.delete(`/api/tests/${encodeURIComponent(id)}`);
 };
 
 /**

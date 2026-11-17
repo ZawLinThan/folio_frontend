@@ -44,23 +44,28 @@ test("only Spotify content URLs and secure exact-origin redirects are accepted",
     ),
     { type: "playlist", id: "1234567890123456789012" },
   );
+
   for (const link of [
     "https://open.spotify.com.evil.test/track/1234567890123456789012",
     "javascript:alert(1)",
     "https://open.spotify.com/user/example",
     "http://open.spotify.com/track/1234567890123456789012",
-  ])
+  ]) {
     assert.equal(spotifyContent(link), null);
+  }
+
   assert.equal(
     validateRedirect(config.redirectUri, window.location.origin),
     config.redirectUri,
   );
+
   for (const value of [
     "http://localhost:5173/spotify/callback",
     "https://evil.test/spotify/callback",
     `${config.redirectUri}?next=evil`,
-  ])
+  ]) {
     assert.throws(() => validateRedirect(value, window.location.origin));
+  }
 });
 test("PKCE verifies state before exchanging a code and never stores tokens", async () => {
   let calls = 0;
@@ -95,6 +100,7 @@ test("an expired access token is refreshed once for concurrent reads, retaining 
           expires_in: 3600,
         });
       }
+
       return json({
         access_token: "old",
         refresh_token: "refresh",
@@ -102,6 +108,7 @@ test("an expired access token is refreshed once for concurrent reads, retaining 
         expires_in: 1,
       });
     }
+
     assert.equal(init.headers.Authorization, "Bearer new");
     return new Response(null, { status: 204 });
   });

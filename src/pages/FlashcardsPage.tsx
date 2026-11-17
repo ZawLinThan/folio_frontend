@@ -132,7 +132,11 @@ const FlashcardsPage = () => {
   const moveCard = (sourceId: string, targetId: string) => {
     const current = orderedCards.map((card) => card.id);
     const ids = reorderIds(current, sourceId, targetId);
-    if (ids === current) return;
+
+    if (ids === current) {
+      return;
+    }
+
     setCards(selectedId, ids);
   };
   const visible = (sets.data ?? []).filter(
@@ -193,16 +197,18 @@ const FlashcardsPage = () => {
             className="fc-form"
             onSubmit={(event) => {
               event.preventDefault();
-              if (mode === "manual")
+
+              if (mode === "manual") {
                 create.mutate(
                   { title, courseId: courseId || null },
                   { onSuccess: created },
                 );
-              else
+              } else {
                 generate.mutate(
                   { title, courseId, documentId, count },
                   { onSuccess: created },
                 );
+              }
             }}
           >
             <div
@@ -544,11 +550,11 @@ const FlashcardsPage = () => {
                             removeCard.isPending || removeDeck.isPending
                           }
                           onClick={() => {
-                            if (confirm.kind === "deck")
+                            if (confirm.kind === "deck") {
                               removeDeck.mutate(confirm.id, {
                                 onSuccess: () => select("", false),
                               });
-                            else
+                            } else {
                               removeCard.mutate(
                                 { setId: selected.id, id: confirm.id },
                                 {
@@ -558,6 +564,7 @@ const FlashcardsPage = () => {
                                   },
                                 },
                               );
+                            }
                           }}
                         >
                           Delete
