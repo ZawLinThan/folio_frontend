@@ -1,6 +1,7 @@
-import type { AuthFormProps } from "../types/study";
 import { Link } from "react-router-dom";
 import { ArrowRight, LockKeyhole } from "lucide-react";
+
+import type { AuthFormProps } from "../types/study";
 import { useAuthForm } from "../hooks/useAuthForm";
 import Brand from "./Brand";
 import ThemeToggle from "./ThemeToggle";

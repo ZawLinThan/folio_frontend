@@ -3,6 +3,7 @@ import { registerHooks } from "node:module";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+
 registerHooks({
   resolve(specifier, context, nextResolve) {
     if (specifier.startsWith(".") && context.parentURL) {

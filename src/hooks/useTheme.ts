@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+
 import { themeSchema } from "../zodSchema/themeSchema";
 import type { ThemeType } from "../zodSchema/themeSchema";
+
 const initialTheme = (): ThemeType => {
   try {
     const saved = themeSchema.safeParse(localStorage.getItem("folio-theme"));

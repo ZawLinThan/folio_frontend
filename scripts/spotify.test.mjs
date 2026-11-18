@@ -1,11 +1,13 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
+
 import {
   createSpotifyClient,
   retryDelay,
   spotifyContent,
   validateRedirect,
 } from "../src/lib/spotify/client.ts";
+
 const config = {
   clientId: "public-client",
   redirectUri: "http://127.0.0.1:5173/spotify/callback",

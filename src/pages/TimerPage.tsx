@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
+
 import PageHeading from "../components/PageHeading";
 import { useTimer } from "../hooks/useTimer";
 import { formatTimer } from "../lib/timer";

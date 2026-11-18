@@ -1,11 +1,3 @@
-import { DeckSurface, SearchField } from "../components/StudySurfaces";
-import {
-  FlashcardsContentSkeleton,
-  FlashcardListSkeleton,
-  SkeletonText,
-} from "../skeletons";
-import { useCardOrderStore } from "../stores/cardOrderStore";
-import { SortableCards, SortableCard } from "../components/SortableCards";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
@@ -19,6 +11,15 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
+
+import { DeckSurface, SearchField } from "../components/StudySurfaces";
+import {
+  FlashcardsContentSkeleton,
+  FlashcardListSkeleton,
+  SkeletonText,
+} from "../skeletons";
+import { useCardOrderStore } from "../stores/cardOrderStore";
+import { SortableCards, SortableCard } from "../components/SortableCards";
 import { useAuthStore } from "../stores/authStore";
 import { reorderIds } from "../lib/reorder";
 import {

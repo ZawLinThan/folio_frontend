@@ -1,6 +1,7 @@
-import { DocumentsContentSkeleton } from "../skeletons";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+
+import { DocumentsContentSkeleton } from "../skeletons";
 import { DocumentsWorkspace, SearchField } from "../components/StudySurfaces";
 import { useStudyData } from "../hooks/useStudyQueries";
 import PageHeading from "../components/PageHeading";

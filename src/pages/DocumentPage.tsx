@@ -1,8 +1,9 @@
-import { DocumentPageSkeleton } from "../skeletons";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, FileText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+
+import { DocumentPageSkeleton } from "../skeletons";
 import {
   studyQueries,
   useStudyData,

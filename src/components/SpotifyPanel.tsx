@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { ExternalLink, Headphones, Link2, Music2, Unplug } from "lucide-react";
+
 import { spotify } from "../lib/spotify";
 import {
   SpotifyError,

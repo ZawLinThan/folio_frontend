@@ -1,9 +1,10 @@
-import { CollectionHeading, RecordRow } from "../components/StudySurfaces";
-import { TestsContentSkeleton } from "../skeletons";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, FileText, Plus, Sparkles, Trash2 } from "lucide-react";
+
+import { CollectionHeading, RecordRow } from "../components/StudySurfaces";
+import { TestsContentSkeleton } from "../skeletons";
 import {
   studyQueries,
   useStudyData,
@@ -39,7 +40,10 @@ const TestsPage = () => {
   const [title, setTitle] = useState("");
   const [reference, setReference] = useState<UploadResult | null>(null);
   const [selectedId, setSelectedId] = useState("");
-  const [confirm, setConfirm] = useState<string | null>(null);
+  const [testToDelete, setTestToDelete] = useState<{
+    id: string;
+    title: string | null;
+  } | null>(null);
   const readyNotes = data.documents.filter(
     (document) =>
       document.notebookId === notebookId &&
@@ -231,6 +235,47 @@ const TestsPage = () => {
           </form>
         </Modal>
       )}
+      {testToDelete && (
+        <Modal
+          title="Delete test"
+          busy={remove.isPending}
+          onClose={() => setTestToDelete(null)}
+        >
+          <form
+            className="inline-form record-edit-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+
+              if (remove.isPending) {
+                return;
+              }
+
+              remove.mutate(testToDelete.id, {
+                onSuccess: () => setTestToDelete(null),
+              });
+            }}
+          >
+            <p>
+              Delete “{testToDelete.title || "Untitled test"}”? This cannot be
+              undone.
+            </p>
+            <QueryState error={remove.error} />
+            <div className="inline-actions record-modal-actions">
+              <button className="button danger" disabled={remove.isPending}>
+                {remove.isPending ? "Deleting…" : "Delete test"}
+              </button>
+              <button
+                type="button"
+                className="button"
+                disabled={remove.isPending}
+                onClick={() => setTestToDelete(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
       {selectedId ? (
         <>
           <button className="button" onClick={() => setSelectedId("")}>
@@ -279,11 +324,12 @@ const TestsPage = () => {
                 }
                 action={
                   <button
+                    type="button"
                     className="icon-button"
                     aria-label={`Delete ${test.title ?? "test"}`}
                     onClick={() => {
                       remove.reset();
-                      setConfirm(test.id);
+                      setTestToDelete({ id: test.id, title: test.title });
                     }}
                   >
                     <Trash2 size={17} />
@@ -296,32 +342,6 @@ const TestsPage = () => {
                 No tests yet. Choose a notebook to create your first practice
                 test.
               </p>
-            )}
-            {confirm && (
-              <div className="notice" role="alert">
-                <p>Delete this generated test?</p>
-                <div className="inline-actions">
-                  <button
-                    className="button danger"
-                    disabled={remove.isPending}
-                    onClick={() =>
-                      remove.mutate(confirm, {
-                        onSuccess: () => setConfirm(null),
-                      })
-                    }
-                  >
-                    Delete test
-                  </button>
-                  <button
-                    className="button"
-                    disabled={remove.isPending}
-                    onClick={() => setConfirm(null)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-                <QueryState error={remove.error} />
-              </div>
             )}
           </section>
         )

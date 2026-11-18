@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+
 import { createCardOrderStore } from "../src/stores/cardOrderStore.ts";
 
 test("persists sorting separately for each account and restores it", () => {

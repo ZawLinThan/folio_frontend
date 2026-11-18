@@ -1,6 +1,7 @@
 import { FileText, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
+
 import { useStudyMutation } from "../hooks/useStudyQueries";
 import { deleteDocument } from "../lib/studyApi";
 import { formatFileSize } from "../lib/utils";

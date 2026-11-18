@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, Check, Layers, RotateCcw } from "lucide-react";
+
 import { SkeletonRegion, SkeletonText } from "../skeletons/components";
 import type { Flashcard } from "../types";
 

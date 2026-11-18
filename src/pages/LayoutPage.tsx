@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+
 import { ActivityContext } from "../context/ActivityContext";
 import type { Playback } from "../lib/spotify/client";
 import MusicPanel from "../components/MusicPanel";
-import { Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import WorkspaceSidebar from "../components/WorkspaceSidebar";
 import FloatingTimer from "../components/FloatingTimer";

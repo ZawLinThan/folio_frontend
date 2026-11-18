@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
 import {
   OverviewHero,
   OverviewPracticePanels,
@@ -8,10 +10,8 @@ import {
 import { OverviewCoursesSkeleton } from "../skeletons";
 import { studyQueries, useStudyData } from "../hooks/useStudyQueries";
 import QueryState from "../components/QueryState";
-
 import CourseCardGrid from "../components/CourseCardGrid";
 import PageHeading from "../components/PageHeading";
-import { useQuery } from "@tanstack/react-query";
 import { useDisplayName } from "../hooks/useProfile";
 
 const OverviewPage = () => {

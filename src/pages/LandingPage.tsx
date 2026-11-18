@@ -8,6 +8,7 @@ import {
   MessageSquareText,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+
 import Brand from "../components/Brand";
 import "../landing.css";
 

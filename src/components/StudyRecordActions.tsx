@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import {
   renameCourse,
   deleteCourse,

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Music2 } from "lucide-react";
+
 import { useTimer } from "../hooks/useTimer";
 import { formatTimer } from "../lib/timer";
 import type { Playback } from "../lib/spotify/client";
+
 function SpotifyIcon() {
   return (
     <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">

@@ -1,4 +1,5 @@
 import { useId, useRef, useState } from "react";
+
 import { UploadDropzone } from "./UploadDropzone";
 import { useStudyMutation } from "../hooks/useStudyQueries";
 import { uploadDocument } from "../lib/studyApi";
